@@ -1,39 +1,28 @@
 #!/bin/sh
 
-nvidia_lock="$XDG_DATA_HOME/nvidia_lock"
-
-if [ -f "$nvidia_lock" ]; then
-    xrandr --setprovideroutputsource modesetting NVIDIA-0
-    xrandr --auto
-fi
-
-pgrep mpd || mpd &
 dunst &
 picom &
 sxhkd &
 unclutter &
 clipmenud &
 safeeyes &
+redshift &
 
-monitors=`xrandr --listmonitors | wc -l`
-if [ $monitors -eq 2 ]; then
-    suspender &
-    transmission-daemon &
-    redshift &
+xwallpaper \
+   --output HDMI2 --stretch "$XDG_DATA_HOME/wallpaper" \
+   --output DP1 --stretch "$XDG_DATA_HOME/vertical"
 
-    xwallpaper --stretch "$XDG_DATA_HOME/wallpaper"
-else
-    xwallpaper \
-       --output HDMI2 --stretch "$XDG_DATA_HOME/wallpaper" \
-       --output DP2 --stretch "$XDG_DATA_HOME/vertical"
+xmodmap -e "keycode 135 = Super_R Menu"   # remap 'menu' button
+xset r rate 200 35                        # keyboard speed
+xsetroot -cursor_name left_ptr            # default cursor
+xset s on                                 # enable screensaver
+xset s 600                                # seconds before screensave
+xss-lock -- physlock -ms &                # set screen lock
+xrdb -merge "$XDG_CONFIG_HOME/Xresources" # apply xresources
+
+if [ "$WM" = "dwm" ]; then
+    dwmbar &
+    dwmlistener.sh &
 fi
 
-xmodmap -e "keycode 135 = Super_R Menu"
-xset r rate 200 35
-xrdb -merge "$XDG_CONFIG_HOME/Xresources"
-xsetroot -cursor_name left_ptr
-xset s on
-xset s 600
-xss-lock -- physlock -ms &
-
-exec bspwm
+exec "$WM"

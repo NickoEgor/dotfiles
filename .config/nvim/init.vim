@@ -1,3 +1,4 @@
+" vim: fdm=marker foldlevel=0 tw=2 sw=2
 set nocompatible
 
 " set leader key
@@ -37,9 +38,6 @@ Plug 'markonm/traces.vim'
 " rename file
 Plug 'vim-scripts/Rename2'
 
-" search with ripgrep
-Plug 'jremmen/vim-ripgrep'
-
 " status line
 Plug 'vim-airline/vim-airline'
 let g:airline_exclude_filetypes = ['text']
@@ -58,13 +56,9 @@ else
     let g:airline_extensions = ['tabline', 'ale', 'branch', 'whitespace']
 endif
 
-" autocomplete
-Plug 'ervandew/supertab'
-let g:SuperTabDefaultCompletionType = "<C-n>"
-Plug 'Shougo/deoplete.nvim'
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-Plug 'Shougo/neoinclude.vim'
+" " autocomplete
+" Plug 'ervandew/supertab'
+" let g:SuperTabDefaultCompletionType = "context"
 
 " snippets
 Plug 'Shougo/neosnippet.vim'
@@ -76,7 +70,7 @@ imap <C-k> <Plug>(neosnippet_expand_or_jump)
 smap <C-k> <Plug>(neosnippet_expand_or_jump)
 xmap <C-k> <Plug>(neosnippet_expand_target)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-            \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " linting
 Plug 'w0rp/ale'
@@ -88,26 +82,37 @@ let g:ale_fixers = {
             \   'sh': ['shellcheck'],
             \}
 let g:ale_linters = {
-            \   'python': ['flake8', 'pylint'],
-            \   'tex': ['chktex'],
-            \   'cpp': ['clang', 'gcc'],
-            \   'c': ['clang', 'gcc'],
-            \   'sh': ['shfmt'],
-            \}
-let g:ale_c_parse_compile_commands = 1 " cpp headers issue
-
+      \   'cpp': ['cpplint', 'clang', 'gcc'],
+      \   'c': ['clang', 'gcc'],
+      \   'sh': ['shfmt'],
+      \   'python': ['flake8', 'pylint'],
+      \   'tex': ['chktex'],
+      \}
 let g:ale_set_highlights = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_completion_enabled = 0
 let b:ale_list_window_size = 5
-let b:ale_warn_about_trailing_blank_lines = 1
-let b:ale_warn_about_trailing_whitespace = 1
-au FileType cpp,go,python setlocal completeopt-=preview
-nn <silent> <leader>F :ALEFix<CR>
-nn <silent> <leader>L :ALEToggle<CR>
-nn <silent> <A-[> :ALEPrevious<CR>
-nn <silent> <A-]> :ALENext<CR>
+let g:ale_completion_enabled = 1
+" tex options
+" 13 - intersentence spacing
+" 26 - spaces before punctuation
+" 44 - hline in tables
+let g:ale_tex_chktex_options = '-n13 -n26 -n44'
+" c/c++ options
+" NOTE: cpp headers issue
+let g:ale_c_parse_compile_commands = 1
+let g:ale_cpp_cpplint_options =
+      \'--extensions=cpp,hpp,cc,c,h --filter=-legal/copyright,-build/include_order,
+      \-whitespace/line_length,-whitespace/indent,-whitespace/comments,
+      \-runtime/references,-readability/todo,-build/include'
+set omnifunc=ale#completion#OmniFunc
+nmap <leader>Al <Plug>(ale_lint)
+nmap <leader>At <Plug>(ale_toggle)
+nmap <leader>Af <Plug>(ale_fix)
+nmap <leader>Ad <Plug>(ale_detail)
+nmap <leader>]  <Plug>(ale_next)
+nmap <leader>[  <Plug>(ale_previous)
 
 " python
 Plug 'vim-scripts/indentpython.vim'
@@ -165,6 +170,8 @@ au FileType markdown setlocal filetype=markdown.pandoc
 au VimEnter *.md setlocal filetype=markdown
 let g:pandoc#syntax#conceal#use = 0
 
+Plug 'liuchengxu/space-vim-dark'
+
 if (&term!='linux')
     " language switching
     Plug 'lyokha/vim-xkbswitch'
@@ -178,12 +185,24 @@ if (&term!='linux')
     Plug 'vim-airline/vim-airline-themes'
     Plug 'dylanaraps/wal.vim'
     Plug 'drewtempelmeyer/palenight.vim'
-
 endif
 
 call plug#end()
 
 filetype plugin on
+
+" colortheme
+" NOTE: term colors can break colorscheme in vanilla vim
+"""""""""""
+" set bg=dark
+" colo gruvbox
+" set notermguicolors
+"""""""""""
+" colo nord
+" set termguicolors
+"""""""""""
+colo space-vim-dark
+" hi Comment cterm=italic
 
 " file manager
 let g:netrw_banner = 0
@@ -223,7 +242,7 @@ set modelines=5
 set noshowmode
 set showcmd
 set wildmenu
-set wildmode=longest,list,full
+set wildmode=longest,full
 set mouse=a
 set scrolloff=5
 set foldmethod=indent
@@ -265,26 +284,26 @@ nn <silent> <C-q> :close<CR>
 
 " different cursors per mode
 if (&term!='linux')
-    if exists('$TMUX')
-        let &t_SI = "\ePtmux;\e\e[6 q\e\\"
-        let &t_SR = "\ePtmux;\e\e[4 q\e\\"
-        let &t_EI = "\ePtmux;\e\e[2 q\e\\"
-    else
-        let &t_SI = "\e[6 q"
-        let &t_SR = "\e[4 q"
-        let &t_EI = "\e[2 q"
-    endif
+  if exists('$TMUX')
+    let &t_SI = "\ePtmux;\e\e[6 q\e\\"
+    let &t_SR = "\ePtmux;\e\e[4 q\e\\"
+    let &t_EI = "\ePtmux;\e\e[2 q\e\\"
+  else
+    let &t_SI = "\e[6 q"
+    let &t_SR = "\e[4 q"
+    let &t_EI = "\e[2 q"
+  endif
 endif
 
 " Split moving/resizing
 fun! ToggleResizeSplitMode()
-    if !exists('b:SplitResize')
-        let b:SplitResize=1
-        echo "Resizing enabled"
-    else
-        unlet b:SplitResize
-        echo "Resizing disabled"
-    endif
+  if !exists('b:SplitResize')
+    let b:SplitResize=1
+    echo "Resizing enabled"
+  else
+    unlet b:SplitResize
+    echo "Resizing disabled"
+  endif
 endfun
 
 nn <silent> <expr> <C-h> !exists('b:SplitResize') ? '<C-w><C-h>' : ':vert res -1<CR>'
@@ -312,9 +331,10 @@ au VimLeave *.tex !texclear %:p:h
 au FileType python setlocal textwidth=79 | setlocal colorcolumn=80
 " c++ style
 au FileType c,cpp,h,hpp setlocal tabstop=4 | setlocal shiftwidth=4 |
-            \ setlocal textwidth=120 | setlocal colorcolumn=121
-" js style
-au FileType javascript setlocal tabstop=2 | setlocal shiftwidth=2
+      \ setlocal textwidth=120 | setlocal colorcolumn=121
+" cmake, js, yaml, proto
+au FileType cmake,javascript,typescript,yaml,proto
+      \ setlocal tabstop=2 | setlocal shiftwidth=2
 
 " FORMATTERS
 " shell
@@ -331,6 +351,37 @@ nn <silent> tc :tabclose<CR>
 " Autoremove trailing whitespaces
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
-" Update ctags
-com Ctags execute "!ctags -R --exclude=.git --exclude=node_modules ."
-nn <silent> <leader>T :Ctags<CR>
+" update ctags
+com! Ctags execute "!updtags.sh"
+nn <silent> <leader>t :Ctags<CR>
+
+" search visually selected text with '//'
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+
+" replace visually selected text
+vnoremap <leader>s y:%s/<C-R>+//g<Left><Left>
+
+" spelling
+nn <silent> <leader>Se :setlocal spell spelllang+=en<CR>
+nn <silent> <leader>Sr :setlocal spell spelllang+=ru<CR>
+nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
+
+" sessions
+nn <silent> <leader>ms :mksession! <bar> echo "Session saved"<CR>
+nn <silent> <leader>ml :source Session.vim<CR>
+nn <silent> <leader>md :!rm Session.vim<CR>
+
+" grep
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ -g\ '!build'
+endif
+
+func! QuickGrep(pattern)
+  exe "silent grep! " . a:pattern
+  copen
+  let l:nr=winnr()
+  exe l:nr . "wincmd J"
+endfunc
+
+command! -nargs=1 QuickGrep call QuickGrep(<f-args>)
+nn <leader>g :QuickGrep<space>""<left>
