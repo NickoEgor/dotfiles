@@ -2,15 +2,16 @@
 
 # path
 export GOPATH="$HOME/prog/go"
-export PATH="$PATH:$HOME/.local/bin:$GOPATH/bin"
+export PATH="$PATH:$HOME/.local/bin:$HOME/.local/bin/specific:$GOPATH/bin"
 
 # programs
 export SHELL="/bin/zsh"
 export TERMINAL="st"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export BROWSER="firefox"
+export BROWSER="qutebrowser"
 export READER="zathura"
+export WM="dwm"
 
 # directories
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -18,7 +19,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 
 # files
-export HISTFILE="$XDG_DATA_HOME/sh_history"
+export HISTFILE="$XDG_DATA_HOME/shell.hist"
 export MANPATH="$MANPATH:$XDG_DATA_HOME/man"
 export INPUTRC="$XDG_CONFIG_HOME/inputrc"
 export R_PROFILE_USER="$XDG_CONFIG_HOME/Rprofile"
@@ -27,7 +28,7 @@ export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
 export PYLINTHOME="$XDG_CACHE_HOME/pylint"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export ELINKS_CONFDIR="$XDG_CONFIG_HOME/elinks"
-export SUDO_ASKPASS="$HOME/.local/bin/dmenu_pass"
+export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
 export LESSHISTFILE="-"
 export TERMINFO="$XDG_DATA_HOME/terminfo"
 export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
@@ -52,10 +53,14 @@ export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
+# program settings
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export SXHKD_SHELL="/bin/bash"
 
-[[ -f "$HOME/.zshrc" ]] && . "$HOME/.zshrc"
+if [ -f "$XDG_CONFIG_HOME/autostart.sh" ]; then
+    source "$XDG_CONFIG_HOME/autostart.sh"
+fi
 
 if [[ $(tty) = "/dev/tty1" ]]; then
-	pgrep -x bspwm || exec startx 1>/dev/null 2>/dev/null
+	pgrep -x "$WM" || exec startx 1>/dev/null 2>/dev/null
 fi

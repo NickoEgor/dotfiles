@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/bin/bash
 
-pgrep mpd || mpd &
+pgrep -x mpd || mpd &>/dev/null &

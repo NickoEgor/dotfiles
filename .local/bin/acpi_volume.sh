@@ -1,17 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
-# acpi_listen | while read -r line ; do
-#     case "$line" in
-#         button/mute*)       pulsemixer --toggle-mute ;;
-#         button/volumeup*)   pulsemixer --change-volume +5 ;;
-#         button/volumedown*) pulsemixer --change-volume -5 ;;
-#     esac
-# done
+[ $(pgrep -x acpi_volume.sh | wc -l) -gt 2 ] && exit 1
 
 acpi_listen | while read -r line ; do
     case "$line" in
-        button/mute*)       amixer set Master toggle ;;
-        button/volumeup*)   amixer set Master 5+ ;;
-        button/volumedown*) amixer set Master 5- ;;
+        button/mute*)       pulsemixer --toggle-mute ;;
+        button/volumeup*)   pulsemixer --change-volume +3 ;;
+        button/volumedown*) pulsemixer --change-volume -3 ;;
     esac
 done

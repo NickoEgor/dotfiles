@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 dunst &
 picom &
@@ -6,7 +6,6 @@ sxhkd &
 unclutter &
 clipmenud &
 safeeyes &
-redshift &
 
 xwallpaper \
    --output HDMI2 --stretch "$XDG_DATA_HOME/wallpaper" \

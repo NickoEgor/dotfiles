@@ -1,14 +1,16 @@
-blacklist.conf -> /etc/modprobe.d/blacklist.conf
-cron/* -> /var/spool/cron/*
-custom -> /etc/sudoers.d/custom
-events/* -> /etc/acpi/events/*
-fstab -> /etc/fstab
-pacman.conf -> /etc/pacman.conf
-powertop.service -> /etc/systemd/system/powertop.service
-username.conf -> /etc/systemd/system/transmission.service.d/username.conf
-xorg.conf.d/* -> /etc/X11/xorg.conf.d/*
-chrome/* -> $HOME/.mozilla/firefox/<profile>/chrome/*
-10-monitor.conf -> /etc/X11/xorg.conf.d/10-monitor.conf # job dual monitors
-logind.conf -> /etc/systemd/logind.conf
-mirrorlist -> /etc/pacman.d/mirrorlist
-vconsole.conf -> /etc/vconsole.conf
+10-monitor.conf         -> /etc/X11/xorg.conf.d/10-monitor.conf # job dual monitors
+events_alsa/*           -> /etc/acpi/events/*
+events_bright/*         -> /etc/acpi/events/*
+events_pulse/*          -> /etc/acpi/events/*
+firefox/*               -> ~/.mozilla/firefox/<profile>/chrome/*
+fstab                   -> /etc/fstab
+locale.conf             -> /etc/locale.conf
+logind.conf             -> /etc/systemd/logind.conf
+mirrorlist              -> /etc/pacman.d/mirrorlist
+modprobe.d/*            -> /etc/modprobe.d/*
+pacman.conf             -> /etc/pacman.conf
+pulse_alsa/*            -> /etc/pulse/*
+pulse_sys/*             -> /etc/pulse/*
+services/*              -> /etc/systemd/system/*
+vconsole.conf           -> /etc/vconsole.conf
+xorg.conf.d/*           -> /etc/X11/xorg.conf.d/*

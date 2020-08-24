@@ -1,30 +1,21 @@
-" vim: fdm=marker foldlevel=0 tw=2 sw=2
+" vim: fdm=marker fdl=0 ts=2 sw=2 sts=2
 set nocompatible
 
 " set leader key
 let mapleader=" "
 
+" {{{ PLUGINS
+
 call plug#begin('~/.vim/plugged')
 
 " buffer manipulation
 Plug 'rbgrouleff/bclose.vim'
+nn <silent> <leader>q :Bclose<CR>
 
 " comments
-Plug 'scrooloose/nerdcommenter'
-let g:NERDSpaceDelims = 1
-let g:NERDDefaultAlign = 'left'
-let g:NERDTrimTrailingWhitespace = 1
-let g:NERDToggleCheckAllLines = 1
-let g:NERDCustomDelimiters = {'': {'left': '#','right': '' }}
-if (&term!='linux')
-    nmap <C-_> <plug>NERDCommenterInvert<ESC>j0
-    vmap <C-_> <plug>NERDCommenterInvert<ESC>j0
-    imap <C-_> <plug>NERDCommenterInsert
-else
-    nmap <C-c> <plug>NERDCommenterInvert<ESC>j0
-    vmap <C-c> <plug>NERDCommenterInvert<ESC>j0
-    imap <C-c> <plug>NERDCommenterInsert
-endif
+Plug 'tpope/vim-commentary'
+nmap <C-_> <plug>CommentaryLine<ESC>j
+vmap <C-_> <plug>Commentary<ESC>
 
 " improved quoting/parenthesizing
 Plug 'tpope/vim-surround'
@@ -39,26 +30,11 @@ Plug 'markonm/traces.vim'
 Plug 'vim-scripts/Rename2'
 
 " status line
-Plug 'vim-airline/vim-airline'
-let g:airline_exclude_filetypes = ['text']
-let g:airline#extensions#whitespace#enabled = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_alt_sep = ''
-let g:airline#extensions#tabline#left_sep = ''
-if $TERM != 'linux'
-    let g:airline_theme='minimalist'
-    let g:airline#extensions#xkblayout#enabled = 1
-    let g:airline_powerline_fonts = 1
-    let g:airline_extensions = ['tabline', 'ale', 'branch', 'whitespace', 'xkblayout']
-else
-    let g:airline_theme='jellybeans'
-    let g:airline_powerline_fonts = 0
-    let g:airline_extensions = ['tabline', 'ale', 'branch', 'whitespace']
-endif
+Plug 'itchyny/lightline.vim'
 
-" " autocomplete
-" Plug 'ervandew/supertab'
-" let g:SuperTabDefaultCompletionType = "context"
+" autocomplete
+Plug 'ervandew/supertab'
+let g:SuperTabDefaultCompletionType = "context"
 
 " snippets
 Plug 'Shougo/neosnippet.vim'
@@ -74,15 +50,9 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 
 " linting
 Plug 'w0rp/ale'
-let g:ale_fixers = {
-            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-            \   'python': ['autopep8', 'isort', 'black'],
-            \   'cpp': ['clangtidy'],
-            \   'c': ['clangtidy'],
-            \   'sh': ['shellcheck'],
-            \}
+let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'] }
 let g:ale_linters = {
-      \   'cpp': ['cpplint', 'clang', 'gcc'],
+			\   'cpp': ['cpplint', 'clang', 'gcc'],
       \   'c': ['clang', 'gcc'],
       \   'sh': ['shfmt'],
       \   'python': ['flake8', 'pylint'],
@@ -91,7 +61,6 @@ let g:ale_linters = {
 let g:ale_set_highlights = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
-let g:ale_completion_enabled = 0
 let b:ale_list_window_size = 5
 let g:ale_completion_enabled = 1
 " tex options
@@ -116,21 +85,10 @@ nmap <leader>[  <Plug>(ale_previous)
 
 " python
 Plug 'vim-scripts/indentpython.vim'
-Plug 'davidhalter/jedi-vim'
-Plug 'zchee/deoplete-jedi'
-if has('nvim')
-    let g:jedi#completions_enabled = 0
-endif
-let g:jedi#force_py_version = 3
-let g:jedi#use_splits_not_buffers = "left"
-let g:jedi#show_call_signatures = 2
-let g:jedi#popup_select_first = 0
 
 " go
 Plug 'fatih/vim-go'
 au FileType go let g:go_fmt_fail_silently = 1
-au FileType go call deoplete#custom#buffer_option('auto_complete', v:false)
-au FileType go let g:SuperTabDefaultCompletionType = "context"
 
 " fzf
 Plug '/usr/bin/fzf'
@@ -139,59 +97,52 @@ nn <silent> <C-b> :Buffers<CR>
 nn <silent> <leader>b :FZF<CR>
 
 " c++
-Plug 'zchee/deoplete-clang'
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib/clang/'
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'rhysd/vim-clang-format'
-let g:clang_format#code_style = 'llvm'
-au FileType c,cpp,h,hpp nn <silent> <C-f> :ClangFormat<CR>
-Plug 'uplus/vim-clang-rename'
-au FileType c,cpp,h,hpp nn <silent> <leader>r :ClangRenameCurrent<CR>
 Plug 'derekwyatt/vim-fswitch'
-au FileType c,cpp,h,hpp nn <silent> <leader>o :FSHere<CR>
+au FileType c,cpp,h,hpp nn <silent> <leader>s :FSHere<CR>
+Plug 'rhysd/vim-clang-format'
+au FileType c,h,cpp,hpp nn <buffer> <C-f> :ClangFormat<CR>
 
 " tagbar
 Plug 'majutsushi/tagbar'
-nn <silent> <leader>t :TagbarToggle<CR>
+" TODO: make focusable from any split
+nn <silent> <leader>T :TagbarToggle<CR>
 
 " indentation
-Plug 'Yggdroot/indentLine'
-" can break conceallevel
+Plug 'Yggdroot/indentLine' " can break conceallevel
 au FileType tex,markdown,json let g:indentLine_setColors = 0
 au FileType tex,markdown,json let g:indentLine_enabled = 0
 
-" SYNTAX FILES
-Plug 'vifm/vifm.vim' " vifm
-Plug 'baskerville/vim-sxhkdrc' " sxhkd
-Plug 'tomlion/vim-solidity' " solidity
+" language switching
+Plug 'lyokha/vim-xkbswitch'
+let g:XkbSwitchEnabled = 1
+
+" highlight colors
+Plug 'ap/vim-css-color'
+
+" syntax files
+Plug 'baskerville/vim-sxhkdrc'      " sxhkd
+Plug 'tomlion/vim-solidity'         " solidity
 Plug 'vim-pandoc/vim-pandoc-syntax' " markdown
 au FileType markdown setlocal filetype=markdown.pandoc
 au VimEnter *.md setlocal filetype=markdown
 let g:pandoc#syntax#conceal#use = 0
 
+" file picker
+Plug 'vifm/vifm.vim'
+
+" theme
+Plug 'arcticicestudio/nord-vim'
+Plug 'morhetz/gruvbox'
 Plug 'liuchengxu/space-vim-dark'
-
-if (&term!='linux')
-    " language switching
-    Plug 'lyokha/vim-xkbswitch'
-    let g:XkbSwitchEnabled = 1
-
-    "highlight hex colors
-    Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
-    let g:Hexokinase_highlighters = ['backgroundfull']
-
-    " theme
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'dylanaraps/wal.vim'
-    Plug 'drewtempelmeyer/palenight.vim'
-endif
 
 call plug#end()
 
 filetype plugin on
 
-" colortheme
+" }}}
+
+" {{{ COLORTHEME
 " NOTE: term colors can break colorscheme in vanilla vim
 """""""""""
 " set bg=dark
@@ -202,61 +153,72 @@ filetype plugin on
 " set termguicolors
 """""""""""
 colo space-vim-dark
-" hi Comment cterm=italic
+hi Comment cterm=italic
+" }}}
 
-" file manager
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-" let g:netrw_winsize = -25
-" nn <silent> <C-n> :Lexplore<CR>
-" nn <silent> <leader>n :Explore<CR>
-nn <silent> <C-n> :Explore<CR>
-nn <silent> <leader>n :Rexplore<CR>
-nn <silent> <leader>_ <Plug>NetrwRefresh
-
-set bg=dark
-colo palenight
-hi Normal ctermbg=233
-
-set laststatus=0
-set ffs=unix,dos,mac
+" {{{ OPTIONS
+" status line
+set laststatus=2
+" encoding/fileformat
 set encoding=utf-8
-set fencs=utf-8,cp1251,koi8-r,ucs-2,cp866
-set autoindent
+set fileencodings=utf-8,cp1251,ucs-2,koi8-r,cp866
+set fileformat=unix
+set fileformats=unix,dos,mac
+" search
 set incsearch
 set hlsearch
-set hidden
-set viminfo="-"
-set clipboard=unnamedplus
-set expandtab
-set tabstop=4
-set shiftwidth=4
+" tab/space/indent
+set tabstop=4       " width for Tab
+set shiftwidth=4    " width for shifting with '>>'/'<<'
+set softtabstop=4   " width for Tab in inserting or deleting (Backspace)
 set smarttab
+set expandtab
+set autoindent
+set nolist
+" numbers
 set number
 set relativenumber
+" info/swap/backup
+set viminfo="-"
 set nobackup
 set nowritebackup
 set noundofile
+" modeline
 set modeline
 set modelines=5
 set noshowmode
 set showcmd
+" wildmenu
 set wildmenu
 set wildmode=longest,full
+" mouse
 set mouse=a
-set scrolloff=5
+" folding
 set foldmethod=indent
 set foldlevel=99
+" splits
 set splitbelow
 set splitright
-set fileformat=unix
-set nolist
+" conceal
 set conceallevel=0
 set concealcursor=nvic
+" tags
+set tags=./tags,tags,~/.local/share/tags
+" spell
+set spell spelllang=
+" file search
+set path+=**
+set wildignore+=*/build/*,*/.git/*,*/node_modules/*
+" misc
+set completeopt-=preview
+set clipboard=unnamedplus
+set scrolloff=5
+set hidden
 set cursorline
-set cino=N-s,g0
-set tags=./tags;
-set termguicolors
+set cinoptions=N-s,g0
+" }}}
+
+" {{{ MAPPINGS
 
 " change <paste> command behaviour
 xn p "_dp
@@ -270,19 +232,21 @@ com! Q :q
 com! W :w
 com! WQ :wq
 com! Wq :wq
+com! Qa :qa
 com! -bang Q :q<bang>
 
 " normal mode bindings
-nn <silent> <leader>f :noh<Enter>
+nn <silent> <leader>h :noh<Enter>
 nn Y y$
 nn zq ZQ
 
-" buffer switching
-nn <silent> <leader>h :bprev<CR>
-nn <silent> <leader>l :bnext<CR>
+" buffer close
 nn <silent> <C-q> :close<CR>
 
-" different cursors per mode
+" }}}
+
+" {{{ CURSOR
+" NOTE: different cursors per mode
 if (&term!='linux')
   if exists('$TMUX')
     let &t_SI = "\ePtmux;\e\e[6 q\e\\"
@@ -294,8 +258,9 @@ if (&term!='linux')
     let &t_EI = "\e[2 q"
   endif
 endif
+" }}}
 
-" Split moving/resizing
+" {{{ SPLIT/RESIZE
 fun! ToggleResizeSplitMode()
   if !exists('b:SplitResize')
     let b:SplitResize=1
@@ -310,23 +275,65 @@ nn <silent> <expr> <C-h> !exists('b:SplitResize') ? '<C-w><C-h>' : ':vert res -1
 nn <silent> <expr> <C-j> !exists('b:SplitResize') ? '<C-w><C-j>' : ':res -1<CR>'
 nn <silent> <expr> <C-k> !exists('b:SplitResize') ? '<C-w><C-k>' : ':res +1<CR>'
 nn <silent> <expr> <C-l> !exists('b:SplitResize') ? '<C-w><C-l>' : ':vert res +1<CR>'
- " it's better to not remap ESC button
+ " NOTE: it's better to not remap ESC button
 nn gr :call ToggleResizeSplitMode()<CR>
+" }}}
 
-" file executing
-nn <leader>e :w <bar> :!compiler %<CR>
-nn <leader>E :w <bar> :!compiler % 2<CR>
-nn <leader>x :!chmod +x %<CR>
-nn <leader>X :!chmod -x %<CR>
+" {{{ GREPPING
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ -g\ '!build'
+endif
 
-" showing results
-au FileType tex,markdown nn <leader>p :!opout %<CR><CR>
-au FileType c,cpp nn <leader>p :!./%:r<CR>
+func! QuickGrep(pattern)
+  exe "silent grep! " . a:pattern
+  copen
+  if line('$') == 1 && getline(1) == ''
+    echo "No search results"
+    cclose
+  else
+    let l:nr=winnr()
+    exe l:nr . "wincmd J"
+  endif
+endfunc
 
-au FileType tex nn <leader>c :!texclear %:p:h<CR><CR>
-au VimLeave *.tex !texclear %:p:h
+command! -nargs=1 QuickGrep call QuickGrep(<f-args>)
+nn <leader>g :QuickGrep<space>""<left>
+vn <leader>g y:QuickGrep "<C-r>+"<CR>
+" }}}
 
-" STYLES
+" {{{ NETRW
+let g:netrw_banner = 0
+let g:netrw_list_hide = '^\./'
+let g:netrw_liststyle = 3
+let g:netrw_dirhistmax = 0
+nn <silent> <C-n> :Explore<CR>
+nn <silent> <leader>n :Rexplore<CR>
+nn <silent> <leader><C-n> :Lexplore<CR>
+nn <silent> <leader>_ <Plug>NetrwRefresh
+" }}}
+"
+" {{{ TABS
+nn <silent> th :tabprev<CR>
+nn <silent> tl :tabnext<CR>
+nn <silent> tn :tabnew<CR>
+nn <silent> tc :tabclose<CR>
+nn <silent> tH :tabmove -1<CR>
+nn <silent> tL :tabmove<CR>
+" }}}
+
+" {{{ SPELL
+nn <silent> <leader>Se :setlocal spell spelllang+=en<CR>
+nn <silent> <leader>Sr :setlocal spell spelllang+=ru<CR>
+nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
+" }}}
+
+" {{{ SESSIONS
+nn <silent> <leader>ms :mksession! <bar> echo "Session saved"<CR>
+nn <silent> <leader>ml :source Session.vim<CR>
+nn <silent> <leader>md :!rm Session.vim<CR>
+" }}}
+
+" {{{ STYLES
 " python pep textwidth
 au FileType python setlocal textwidth=79 | setlocal colorcolumn=80
 " c++ style
@@ -335,20 +342,39 @@ au FileType c,cpp,h,hpp setlocal tabstop=4 | setlocal shiftwidth=4 |
 " cmake, js, yaml, proto
 au FileType cmake,javascript,typescript,yaml,proto
       \ setlocal tabstop=2 | setlocal shiftwidth=2
+" }}}
 
-" FORMATTERS
+" {{{ FORMATTERS
 " shell
 au FileType sh nn <buffer> <C-f> :%!shfmt<CR>
 " json
 au FileType json nn <buffer> <C-f> :%!jq<CR>
+" js,yaml,html,css
+au FileType yaml,html,css,javascript,typescript nn <buffer> <C-f> :!prettier --write %<CR>
+" }}}
 
-" TABS
-nn <silent> th :tabprev<CR>
-nn <silent> tl :tabnext<CR>
-nn <silent> tn :tabnew<CR>
-nn <silent> tc :tabclose<CR>
+" {{{ MISC
 
-" Autoremove trailing whitespaces
+" file executing
+nn <leader>e :w <bar> :!compiler %<CR>
+nn <leader>E :w <bar> :!compiler % 2<CR>
+nn <leader>x :!chmod +x %<CR>
+nn <leader>X :!chmod -x %<CR>
+
+" commentstring's
+au FileType xdefaults setlocal commentstring=!\ %s
+au FileType desktop,sxhkdrc,bib setlocal commentstring=#\ %s
+
+" showing results
+au FileType tex,markdown nn <leader>o :!openout %<CR><CR>
+au FileType c,cpp nn <leader>o :!./%:r<CR>
+
+" tex
+let g:tex_flavor = "latex" " set filetype for tex
+au FileType tex nn <leader>c :!texclear %:p:h<CR><CR>
+au VimLeave *.tex !texclear %:p:h
+
+" autoremove trailing whitespaces
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
 " update ctags
@@ -361,27 +387,7 @@ vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 " replace visually selected text
 vnoremap <leader>s y:%s/<C-R>+//g<Left><Left>
 
-" spelling
-nn <silent> <leader>Se :setlocal spell spelllang+=en<CR>
-nn <silent> <leader>Sr :setlocal spell spelllang+=ru<CR>
-nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
+" use K for c++ man pages
+au FileType hpp,cpp setlocal keywordprg=cppman
 
-" sessions
-nn <silent> <leader>ms :mksession! <bar> echo "Session saved"<CR>
-nn <silent> <leader>ml :source Session.vim<CR>
-nn <silent> <leader>md :!rm Session.vim<CR>
-
-" grep
-if executable('rg')
-  set grepprg=rg\ --vimgrep\ -g\ '!build'
-endif
-
-func! QuickGrep(pattern)
-  exe "silent grep! " . a:pattern
-  copen
-  let l:nr=winnr()
-  exe l:nr . "wincmd J"
-endfunc
-
-command! -nargs=1 QuickGrep call QuickGrep(<f-args>)
-nn <leader>g :QuickGrep<space>""<left>
+" }}}

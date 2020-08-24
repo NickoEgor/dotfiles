@@ -14,9 +14,15 @@ PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magent
 [[ -n $key[Down]   ]] && bindkey -- $key[Down]   down-line-or-history
 bindkey "^?" backward-delete-char # vi mode backspace fix
 bindkey '^[[Z' reverse-menu-complete # shift-tab
-bindkey -M vicmd 'k' history-beginning-search-backward  # backward search in vi
-bindkey -M vicmd 'j' history-beginning-search-forward   # forward search in vi
-bindkey '^R' history-incremental-search-backward # back incremental search
+bindkey -M vicmd '^K' history-beginning-search-backward # backward search in vi command mode
+bindkey -M viins '^K' history-beginning-search-backward # backward search in vi insert mode
+bindkey -M vicmd '^J' history-beginning-search-forward # forward search in vi command mode
+bindkey -M viins '^J' history-beginning-search-forward # forward search in vi insert mode
+
+# fzf history search
+[ -f "/usr/share/fzf/key-bindings.zsh" ] && source "/usr/share/fzf/key-bindings.zsh"
+bindkey -M viins '^R' fzf-history-widget
+bindkey -M vicmd '^R' fzf-history-widget
 
 # vi escape key delay
 export KEYTIMEOUT=1
@@ -39,6 +45,7 @@ setopt octal_zeroes
 setopt vi
 setopt globdots
 setopt hist_ignore_dups
+setopt nobanghist
 unsetopt nomatch
 
 # completions
@@ -94,6 +101,9 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 bindkey '^ ' autosuggest-accept
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# extra settings (for temporary purposes)
+[ -f "$XDG_CONFIG_HOME/extra.zsh" ] && source "$XDG_CONFIG_HOME/extra.zsh"
 
 # syntax highlight
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
