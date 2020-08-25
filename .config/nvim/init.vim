@@ -33,8 +33,34 @@ Plug 'vim-scripts/Rename2'
 Plug 'itchyny/lightline.vim'
 
 " autocomplete
-Plug 'ervandew/supertab'
-let g:SuperTabDefaultCompletionType = "context"
+Plug 'Shougo/neoinclude.vim'
+Plug 'jsfaint/coc-neoinclude'
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'tag': '*', 'do': { -> coc#util#install()}}
+" extensions
+let g:coc_global_extensions = ['coc-json', 'coc-cmake']
+" tab completion
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+" refresh
+inoremap <silent><expr> <c-space> coc#refresh()
+" symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
 
 " snippets
 Plug 'Shougo/neosnippet.vim'
