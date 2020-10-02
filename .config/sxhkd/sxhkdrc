@@ -27,7 +27,7 @@ super + t
 
 # torrent
 super + shift + t
-    $TERMINAL -e transmission-remote-cli
+    $TERMINAL -e tremc
 
 # search web
 super + {_,shift +} u
@@ -135,7 +135,7 @@ ctrl + Print
     makescreen part
 
 XF86Audio{Lower,Raise}Volume
-    echo "volume {4,5}" > /tmp/dwmbar.fifo
+    amixer set Master 5%{-,+}
 
 XF86AudioMute
-    echo "volume 1" > /tmp/dwmbar.fifo
+    amixer set Master toggle

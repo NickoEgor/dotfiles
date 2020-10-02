@@ -3,10 +3,33 @@ set nocompatible
 
 " set leader key
 let mapleader=" "
+let maplocalleader=","
 
 " {{{ PLUGINS
 
 call plug#begin('~/.vim/plugged')
+
+" treeview
+Plug 'antoinemadec/FixCursorHold.nvim'
+Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-hijack.vim'
+nn <silent> <C-n> :Fern . -reveal=%<CR>
+nn <silent> <leader>n :Fern . -reveal=% -drawer -toggle<CR>
+let g:fern#disable_default_mappings = 1
+let g:fern#disable_viewer_hide_cursor = 1
+
+function! FernInit() abort
+  nmap <buffer><nowait> l <Plug>(fern-action-open-or-expand)
+  nmap <buffer><nowait> h <Plug>(fern-action-collapse)
+  nmap <buffer><nowait> s <Plug>(fern-action-open:split)
+  nmap <buffer><nowait> v <Plug>(fern-action-open:vsplit)
+  nmap <buffer> za <Plug>(fern-action-hidden-toggle)
+endfunction
+
+augroup FernGroup
+  autocmd!
+  autocmd FileType fern call FernInit()
+augroup END
 
 " buffer manipulation
 Plug 'rbgrouleff/bclose.vim'
@@ -149,10 +172,6 @@ Plug 'ap/vim-css-color'
 " syntax files
 Plug 'baskerville/vim-sxhkdrc'      " sxhkd
 Plug 'tomlion/vim-solidity'         " solidity
-Plug 'vim-pandoc/vim-pandoc-syntax' " markdown
-au FileType markdown setlocal filetype=markdown.pandoc
-au VimEnter *.md setlocal filetype=markdown
-let g:pandoc#syntax#conceal#use = 0
 
 " file picker
 Plug 'vifm/vifm.vim'
@@ -161,6 +180,7 @@ Plug 'vifm/vifm.vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'morhetz/gruvbox'
 Plug 'liuchengxu/space-vim-dark'
+Plug 'habamax/vim-gruvbit'
 
 call plug#end()
 
@@ -178,7 +198,9 @@ filetype plugin on
 " colo nord
 " set termguicolors
 """""""""""
-colo space-vim-dark
+" colo space-vim-dark
+"""""""""""
+colo gruvbit
 hi Comment cterm=italic
 " }}}
 
@@ -242,6 +264,7 @@ set scrolloff=5
 set hidden
 set cursorline
 set cinoptions=N-s,g0
+set matchpairs+=<:>
 " }}}
 
 " {{{ MAPPINGS
@@ -307,7 +330,7 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREPPING
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ -g\ '!build'
+  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -F
 endif
 
 func! QuickGrep(pattern)
@@ -327,24 +350,23 @@ nn <leader>g :QuickGrep<space>""<left>
 vn <leader>g y:QuickGrep "<C-r>+"<CR>
 " }}}
 
-" {{{ NETRW
+" {{{ FILETREE
 let g:netrw_banner = 0
 let g:netrw_list_hide = '^\./'
 let g:netrw_liststyle = 3
 let g:netrw_dirhistmax = 0
-nn <silent> <C-n> :Explore<CR>
-nn <silent> <leader>n :Rexplore<CR>
-nn <silent> <leader><C-n> :Lexplore<CR>
+nn <silent> <localleader><C-n> :Explore<CR>
+nn <silent> <localleader><leader>n :Lexplore<CR>
 nn <silent> <leader>_ <Plug>NetrwRefresh
 " }}}
-"
+
 " {{{ TABS
 nn <silent> th :tabprev<CR>
 nn <silent> tl :tabnext<CR>
 nn <silent> tn :tabnew<CR>
 nn <silent> tc :tabclose<CR>
 nn <silent> tH :tabmove -1<CR>
-nn <silent> tL :tabmove<CR>
+nn <silent> tL :tabmove +1<CR>
 " }}}
 
 " {{{ SPELL
@@ -380,7 +402,6 @@ au FileType yaml,html,css,javascript,typescript nn <buffer> <C-f> :!prettier --w
 " }}}
 
 " {{{ MISC
-
 " file executing
 nn <leader>e :w <bar> :!compiler %<CR>
 nn <leader>E :w <bar> :!compiler % 2<CR>
@@ -415,5 +436,4 @@ vnoremap <leader>s y:%s/<C-R>+//g<Left><Left>
 
 " use K for c++ man pages
 au FileType hpp,cpp setlocal keywordprg=cppman
-
 " }}}

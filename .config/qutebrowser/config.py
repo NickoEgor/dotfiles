@@ -21,7 +21,6 @@ c.scrolling.bar = 'when-searching'
 c.statusbar.show = 'in-mode'
 c.url.default_page = 'about:blank'
 c.url.start_pages = ['about:blank']
-c.zoom.default = '125%'
 
 # TABS
 c.tabs.background = True
@@ -71,6 +70,8 @@ config.bind('zq', 'quit')
 config.bind('яй', 'quit') # rus
 config.bind('A', 'config-cycle statusbar.show always in-mode')
 config.bind('Ф', 'config-cycle statusbar.show always in-mode') # rus
+config.bind('<Ctrl-H>', 'tab-move -')
+config.bind('<Ctrl-L>', 'tab-move +')
 
 # RUSSIAN LAYOUT BINDS
 config.bind('П', 'scroll-to-perc')          # G
