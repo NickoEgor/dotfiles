@@ -19,6 +19,7 @@ let g:fern#disable_default_mappings = 1
 let g:fern#disable_viewer_hide_cursor = 1
 
 function! FernInit() abort
+  nmap <buffer><nowait> <CR> <Plug>(fern-action-open-or-expand)
   nmap <buffer><nowait> l <Plug>(fern-action-open-or-expand)
   nmap <buffer><nowait> h <Plug>(fern-action-collapse)
   nmap <buffer><nowait> s <Plug>(fern-action-open:split)
@@ -58,9 +59,9 @@ Plug 'itchyny/lightline.vim'
 " autocomplete
 Plug 'Shougo/neoinclude.vim'
 Plug 'jsfaint/coc-neoinclude'
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'tag': '*', 'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 " extensions
-let g:coc_global_extensions = ['coc-json', 'coc-cmake']
+let g:coc_global_extensions = ['coc-cmake', 'coc-json']
 " tab completion
 function! s:check_back_space() abort
   let col = col('.') - 1
