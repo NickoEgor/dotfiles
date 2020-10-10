@@ -5,7 +5,7 @@ dunst &
 picom &
 sxhkd &
 unclutter &
-clipmenud &
+greenclip daemon &
 safeeyes &
 
 # WM autostart
