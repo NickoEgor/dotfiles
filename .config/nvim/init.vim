@@ -175,6 +175,10 @@ Plug 'ap/vim-css-color'
 Plug 'baskerville/vim-sxhkdrc'      " sxhkd
 Plug 'tomlion/vim-solidity'         " solidity
 
+" markdown
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+
 " file picker
 Plug 'vifm/vifm.vim'
 

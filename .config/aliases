@@ -48,7 +48,8 @@ alias \
     gr='git remote' \
     gsh='git stash' \
     gcp='git cherry-pick' \
-    grs='git reset'
+    grs='git reset' \
+    gm='git merge'
 
 # files
 alias \

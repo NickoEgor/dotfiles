@@ -26,7 +26,7 @@ c.url.start_pages = ['about:blank']
 c.tabs.background = True
 c.tabs.position = 'right'
 c.tabs.title.alignment = 'right'
-c.tabs.width = 250
+c.tabs.width = 200
 c.tabs.last_close = 'close'
 c.tabs.show = 'never'
 config.bind('B', 'config-cycle tabs.show always never')
@@ -51,7 +51,7 @@ c.url.searchengines = {
 
 # FONT
 c.fonts.default_family = ['monospace']
-c.fonts.default_size = '12pt'
+c.fonts.default_size = '10pt'
 
 # THEME
 theme_path = path.expandvars("$XDG_DATA_HOME/qutebrowser/styles/global-dark.css")
