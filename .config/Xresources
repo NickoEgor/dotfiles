@@ -1,6 +1,6 @@
 Xcursor.size: 9
 xterm*faceName: monospace:pixelsize=18:antialias=true:autohint=true
-st.alpha: 0.80
+st.alpha: 0.90
 
 dmenu.selbackground: #004411
 

@@ -105,7 +105,7 @@ let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'] }
 let g:ale_linters = {
 			\   'cpp': ['cpplint', 'clang', 'gcc'],
       \   'c': ['clang', 'gcc'],
-      \   'sh': ['shfmt'],
+      \   'sh': ['shfmt', 'shellcheck'],
       \   'python': ['flake8', 'pylint'],
       \   'tex': ['chktex'],
       \}
@@ -183,9 +183,6 @@ Plug 'plasticboy/vim-markdown'
 Plug 'vifm/vifm.vim'
 
 " theme
-Plug 'arcticicestudio/nord-vim'
-Plug 'morhetz/gruvbox'
-Plug 'liuchengxu/space-vim-dark'
 Plug 'habamax/vim-gruvbit'
 
 call plug#end()
@@ -195,17 +192,6 @@ filetype plugin on
 " }}}
 
 " {{{ COLORTHEME
-" NOTE: term colors can break colorscheme in vanilla vim
-"""""""""""
-" set bg=dark
-" colo gruvbox
-" set notermguicolors
-"""""""""""
-" colo nord
-" set termguicolors
-"""""""""""
-" colo space-vim-dark
-"""""""""""
 colo gruvbit
 hi Comment cterm=italic
 " }}}
@@ -336,10 +322,11 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREPPING
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -F
+  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -F\ --hidden
 endif
 
 func! QuickGrep(pattern)
+  " TODO: add check for empty string
   exe "silent grep! " . a:pattern
   copen
   if line('$') == 1 && getline(1) == ''
@@ -442,4 +429,18 @@ vnoremap <leader>s y:%s/<C-R>+//g<Left><Left>
 
 " use K for c++ man pages
 au FileType hpp,cpp setlocal keywordprg=cppman
+
+" setup tagbar for Solidity
+let g:tagbar_type_solidity = {
+    \ 'ctagstype': 'solidity',
+    \ 'kinds' : [
+        \ 'c:contracts',
+        \ 'i:interfaces',
+        \ 'e:events',
+        \ 'f:functions',
+        \ 'm:mappings',
+        \ 'v:varialbes',
+    \ ]
+\ }
+
 " }}}
