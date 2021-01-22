@@ -26,7 +26,6 @@ c.zoom.default = '100%'
 
 # TABS
 c.tabs.background = True
-c.tabs.position = 'right'
 c.tabs.title.alignment = 'right'
 c.tabs.width = 200
 c.tabs.last_close = 'close'

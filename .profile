@@ -9,7 +9,7 @@ export SHELL="/bin/zsh"
 export TERMINAL="st"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export BROWSER="qutebrowser"
+export BROWSER="brave"
 export READER="zathura"
 export WM="dwm"
 
@@ -35,6 +35,7 @@ export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
 export RANDFILE="$XDG_CACHE_HOME/rnd"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
+export _Z_DATA="$XDG_DATA_HOME/z"
 
 # history
 export HISTSIZE=1000000

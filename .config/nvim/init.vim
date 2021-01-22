@@ -19,13 +19,13 @@ let g:fern#disable_default_mappings = 1
 let g:fern#disable_viewer_hide_cursor = 1
 
 function! FernInit() abort
-  nmap <buffer><nowait> <CR> <Plug>(fern-action-open-or-expand)
-  nmap <buffer><nowait> l <Plug>(fern-action-open-or-expand)
-  nmap <buffer><nowait> h <Plug>(fern-action-collapse)
-  nmap <buffer><nowait> s <Plug>(fern-action-open:split)
-  nmap <buffer><nowait> v <Plug>(fern-action-open:vsplit)
-  nmap <buffer><nowait> r <Plug>(fern-action-reload)
-  nmap <buffer> za <Plug>(fern-action-hidden-toggle)
+  nm <buffer><nowait> <CR> <Plug>(fern-action-open-or-expand)
+  nm <buffer><nowait> l <Plug>(fern-action-open-or-expand)
+  nm <buffer><nowait> h <Plug>(fern-action-collapse)
+  nm <buffer><nowait> s <Plug>(fern-action-open:split)
+  nm <buffer><nowait> v <Plug>(fern-action-open:vsplit)
+  nm <buffer><nowait> r <Plug>(fern-action-reload)
+  nm <buffer> za <Plug>(fern-action-hidden-toggle)
 endfunction
 
 augroup FernGroup
@@ -39,8 +39,8 @@ nn <silent> <leader>q :Bclose<CR>
 
 " comments
 Plug 'tpope/vim-commentary'
-nmap <C-_> <plug>CommentaryLine<ESC>j
-vmap <C-_> <plug>Commentary<ESC>
+nm <C-_> <plug>CommentaryLine<ESC>j
+vm <C-_> <plug>Commentary<ESC>
 
 " improved quoting/parenthesizing
 Plug 'tpope/vim-surround'
@@ -68,24 +68,21 @@ function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
-inoremap <silent><expr> <TAB>
+ino <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+ino <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+ino <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
+nm <silent> gd <Plug>(coc-definition)
+nm <silent> gy <Plug>(coc-type-definition)
+nm <silent> gi <Plug>(coc-implementation)
 " refresh
-inoremap <silent><expr> <c-space> coc#refresh()
+ino <silent><expr> <c-space> coc#refresh()
 " symbol renaming
-nmap <leader>rn <Plug>(coc-rename)
+nm <leader>rn <Plug>(coc-rename)
 
 " snippets
 Plug 'Shougo/neosnippet.vim'
@@ -93,9 +90,9 @@ Plug 'Shougo/neosnippet-snippets'
 Plug 'honza/vim-snippets'
 let g:neosnippet#enable_snipmate_compatibility = 1
 let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,~/.vim/snippets'
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
+im <C-k> <Plug>(neosnippet_expand_or_jump)
 smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
+xm <C-k> <Plug>(neosnippet_expand_target)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
       \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
@@ -103,8 +100,8 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 Plug 'w0rp/ale'
 let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'] }
 let g:ale_linters = {
-			\   'cpp': ['cpplint', 'clang', 'gcc'],
-      \   'c': ['clang', 'gcc'],
+			\   'cpp': ['cpplint', 'cc', 'clangtidy', 'clang-format'],
+			\   'c': ['cc', 'clangtidy', 'clang-format'],
       \   'sh': ['shfmt', 'shellcheck'],
       \   'python': ['flake8', 'pylint'],
       \   'tex': ['chktex'],
@@ -123,16 +120,15 @@ let g:ale_tex_chktex_options = '-n13 -n26 -n44'
 " NOTE: cpp headers issue
 let g:ale_c_parse_compile_commands = 1
 let g:ale_cpp_cpplint_options =
-      \'--extensions=cpp,hpp,cc,c,h --filter=-legal/copyright,-build/include_order,
-      \-whitespace/line_length,-whitespace/indent,-whitespace/comments,
-      \-runtime/references,-readability/todo,-build/include'
+      \'--linelength=120 --filter=-legal/copyright,-readability/todo,
+      \-runtime/references,-build/include_order,-build/include'
 set omnifunc=ale#completion#OmniFunc
-nmap <leader>Al <Plug>(ale_lint)
-nmap <leader>At <Plug>(ale_toggle)
-nmap <leader>Af <Plug>(ale_fix)
-nmap <leader>Ad <Plug>(ale_detail)
-nmap <leader>]  <Plug>(ale_next)
-nmap <leader>[  <Plug>(ale_previous)
+nm <leader>l <Plug>(ale_lint)
+nm <leader>a <Plug>(ale_toggle)
+nm <leader>f <Plug>(ale_fix)
+nm <leader>d <Plug>(ale_detail)
+nm <leader>] <Plug>(ale_next)
+nm <leader>[ <Plug>(ale_previous)
 
 " python
 Plug 'vim-scripts/indentpython.vim'
@@ -149,10 +145,9 @@ nn <silent> <leader>b :FZF<CR>
 
 " c++
 Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'rhysd/vim-clang-format'
 Plug 'derekwyatt/vim-fswitch'
 au FileType c,cpp,h,hpp nn <silent> <leader>s :FSHere<CR>
-Plug 'rhysd/vim-clang-format'
-au FileType c,h,cpp,hpp nn <buffer> <C-f> :ClangFormat<CR>
 
 " tagbar
 Plug 'majutsushi/tagbar'
@@ -249,6 +244,9 @@ set spell spelllang=
 " file search
 set path+=**
 set wildignore+=*/build/*,*/.git/*,*/node_modules/*
+" local .vimrc support
+set exrc
+set secure
 " misc
 set completeopt-=preview
 set clipboard=unnamedplus
@@ -322,7 +320,7 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREPPING
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -F\ --hidden
+  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -g\ '!.git'\ -F\ --hidden
 endif
 
 func! QuickGrep(pattern)
@@ -376,7 +374,7 @@ nn <silent> <leader>md :!rm Session.vim<CR>
 
 " {{{ STYLES
 " python pep textwidth
-au FileType python setlocal textwidth=79 | setlocal colorcolumn=80
+au FileType python setlocal textwidth=120 | setlocal colorcolumn=121
 " c++ style
 au FileType c,cpp,h,hpp setlocal tabstop=4 | setlocal shiftwidth=4 |
       \ setlocal textwidth=120 | setlocal colorcolumn=121
@@ -386,12 +384,19 @@ au FileType cmake,javascript,typescript,yaml,proto
 " }}}
 
 " {{{ FORMATTERS
+" c/c++
+au FileType c,cpp,javascript,typescript nn <buffer> <C-f> :ClangFormat<CR>
+au FileType c,cpp,javascript,typescript vn <buffer> <C-f> :ClangFormat<CR>
 " shell
 au FileType sh nn <buffer> <C-f> :%!shfmt<CR>
+au FileType sh vn <buffer> <C-f> :%!shfmt<CR>
 " json
 au FileType json nn <buffer> <C-f> :%!jq<CR>
-" js,yaml,html,css
-au FileType yaml,html,css,javascript,typescript nn <buffer> <C-f> :!prettier --write %<CR>
+au FileType json vn <buffer> <C-f> :%!jq<CR>
+" yaml,html,css
+au FileType yaml,html,css nn <buffer> <C-f> :!prettier --write %<CR>
+" cmake
+au FileType cmake nn <buffer> <C-f> :!cmake-format --line-width 120 -i % <CR><CR>:e<CR>
 " }}}
 
 " {{{ MISC
@@ -422,10 +427,10 @@ com! Ctags execute "!updtags.sh"
 nn <silent> <leader>t :Ctags<CR>
 
 " search visually selected text with '//'
-vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+vn // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " replace visually selected text
-vnoremap <leader>s y:%s/<C-R>+//g<Left><Left>
+vn <leader>s y:%s/<C-R>+//g<Left><Left>
 
 " use K for c++ man pages
 au FileType hpp,cpp setlocal keywordprg=cppman
