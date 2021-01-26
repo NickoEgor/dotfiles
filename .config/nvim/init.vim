@@ -80,7 +80,7 @@ nm <silent> gd <Plug>(coc-definition)
 nm <silent> gy <Plug>(coc-type-definition)
 nm <silent> gi <Plug>(coc-implementation)
 " refresh
-ino <silent><expr> <c-space> coc#refresh()
+ino <silent><expr> <C-space> coc#refresh()
 " symbol renaming
 nm <leader>rn <Plug>(coc-rename)
 
@@ -100,8 +100,8 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 Plug 'w0rp/ale'
 let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'] }
 let g:ale_linters = {
-			\   'cpp': ['cpplint', 'cc', 'clangtidy', 'clang-format'],
-			\   'c': ['cc', 'clangtidy', 'clang-format'],
+      \   'cpp': ['cpplint', 'cc', 'clangtidy', 'clang-format'],
+      \   'c': ['cc', 'clangtidy', 'clang-format'],
       \   'sh': ['shfmt', 'shellcheck'],
       \   'python': ['flake8', 'pylint'],
       \   'tex': ['chktex'],
@@ -122,6 +122,7 @@ let g:ale_c_parse_compile_commands = 1
 let g:ale_cpp_cpplint_options =
       \'--linelength=120 --filter=-legal/copyright,-readability/todo,
       \-runtime/references,-build/include_order,-build/include'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall -Wextra -pedantic'
 set omnifunc=ale#completion#OmniFunc
 nm <leader>l <Plug>(ale_lint)
 nm <leader>a <Plug>(ale_toggle)
@@ -129,6 +130,8 @@ nm <leader>f <Plug>(ale_fix)
 nm <leader>d <Plug>(ale_detail)
 nm <leader>] <Plug>(ale_next)
 nm <leader>[ <Plug>(ale_previous)
+nm <leader>} <Plug>(ale_next_error)
+nm <leader>{ <Plug>(ale_previos_error)
 
 " python
 Plug 'vim-scripts/indentpython.vim'
@@ -147,7 +150,7 @@ nn <silent> <leader>b :FZF<CR>
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'derekwyatt/vim-fswitch'
-au FileType c,cpp,h,hpp nn <silent> <leader>s :FSHere<CR>
+au FileType c,cpp nn <silent> <leader>s :FSHere<CR>
 
 " tagbar
 Plug 'majutsushi/tagbar'
@@ -320,7 +323,7 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREPPING
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -g\ '!.git'\ -F\ --hidden
+  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -g\ '!.git'\ -F\ --hidden\ --no-messages
 endif
 
 func! QuickGrep(pattern)
@@ -374,10 +377,10 @@ nn <silent> <leader>md :!rm Session.vim<CR>
 
 " {{{ STYLES
 " python pep textwidth
-au FileType python setlocal textwidth=120 | setlocal colorcolumn=121
+au FileType python setlocal textwidth=119 | setlocal colorcolumn=120
 " c++ style
-au FileType c,cpp,h,hpp setlocal tabstop=4 | setlocal shiftwidth=4 |
-      \ setlocal textwidth=120 | setlocal colorcolumn=121
+au FileType c,cpp setlocal tabstop=4 | setlocal shiftwidth=4 |
+      \ setlocal textwidth=119 | setlocal colorcolumn=120
 " cmake, js, yaml, proto
 au FileType cmake,javascript,typescript,yaml,proto
       \ setlocal tabstop=2 | setlocal shiftwidth=2
@@ -418,7 +421,6 @@ au FileType c,cpp nn <leader>o :!./%:r<CR>
 let g:tex_flavor = "latex" " set filetype for tex
 au FileType tex nn <leader>c :!texclear %:p:h<CR><CR>
 au VimLeave *.tex !texclear %:p:h
-
 " autoremove trailing whitespaces
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
@@ -433,7 +435,7 @@ vn // y/\V<C-R>=escape(@",'/\')<CR><CR>
 vn <leader>s y:%s/<C-R>+//g<Left><Left>
 
 " use K for c++ man pages
-au FileType hpp,cpp setlocal keywordprg=cppman
+au FileType c,cpp setlocal keywordprg=cppman
 
 " setup tagbar for Solidity
 let g:tagbar_type_solidity = {
