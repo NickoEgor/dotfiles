@@ -23,7 +23,7 @@
     "gitlens.advanced.messages": {
       "suppressCommitHasNoPreviousCommitWarning": true
     },
-    "window.zoomLevel": 0,
+    "window.zoomLevel": -1,
     "go.formatTool": "goimports",
     "go.vetFlags": [
       "[\"-composites=false\"]"

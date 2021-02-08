@@ -131,7 +131,7 @@ nm <leader>d <Plug>(ale_detail)
 nm <leader>] <Plug>(ale_next)
 nm <leader>[ <Plug>(ale_previous)
 nm <leader>} <Plug>(ale_next_error)
-nm <leader>{ <Plug>(ale_previos_error)
+nm <leader>{ <Plug>(ale_previous_error)
 
 " python
 Plug 'vim-scripts/indentpython.vim'
