@@ -73,7 +73,6 @@ alias \
 
 # directories
 alias \
-    cdj='cd ~/prog' \
     cdb='cd ~/.local/bin' \
     cds='cd ${XDG_DATA_HOME}' \
     cdc='cd ${XDG_CONFIG_HOME}'
@@ -97,6 +96,11 @@ alias \
     .3='cd ../../..' \
 
 # utils
+cdj() {
+  cd "$HOME/prog"
+  [ -n "$1" ] && cd "$1"
+}
+
 scr() {
     bindir="$HOME/.local/bin"
     file="$(ls $bindir | fzf)"
@@ -113,6 +117,7 @@ sf() {
 
 # completion
 if [ -n "${BASH}" ]; then
+    source /usr/share/bash-completion/bash_completion
     completions="/usr/share/bash-completion/completions"
     # systemctl
     source ${completions}/systemctl
@@ -144,4 +149,27 @@ if [ -n "${BASH}" ]; then
       source ${completions}/ssh
       complete -F _ssh ssh sshrc shr
     fi
+    # ide
+    source ${completions}/make
+    make-completion-wrapper() {
+        local function_name="$2"
+        local arg_count=$(($#-3))
+        local comp_function_name="$1"
+        shift 2
+        local function="
+      $function_name() {
+        ((COMP_CWORD+=$arg_count))
+        COMP_WORDS=( "$@" \${COMP_WORDS[@]:1} )
+        COMP_LINE=\"\${COMP_WORDS[*]}\"
+        COMP_POINT=\"\${#COMP_LINE}\"
+        "$comp_function_name"
+        return 0
+    }"
+        eval "$function"
+    }
+    make-completion-wrapper _make _make_f make -f .nvim/Makefile
+    complete -F _make_f ide
+    # cdj
+    _cdj() { COMPREPLY=($(cd $HOME/prog ; compgen -d "$2")) ; }
+    complete -F _cdj cdj
 fi
