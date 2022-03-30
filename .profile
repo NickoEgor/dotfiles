@@ -43,6 +43,7 @@ export LESSHISTFILE="-"
 export MANPATH="$MANPATH:$XDG_DATA_HOME/man:$XDG_CACHE_HOME/cppman/cppreference.com"
 export MERGETOOL="nvim -d"
 export PYLINTHOME="$XDG_CACHE_HOME/pylint"
+export PYLINTRC="$XDG_CONFIG_HOME/pylintrc"
 export SYSTEMD_PAGES=less
 export TERMINFO="$XDG_DATA_HOME/terminfo"
 export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"

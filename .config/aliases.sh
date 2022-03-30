@@ -29,7 +29,8 @@ alias \
     xo='xdg-open' \
     mim='file --mime-type' \
     shr='sshrc' \
-    ide="make -f .nvim/Makefile"
+    ide="make -f .nvim/Makefile" \
+    ide_s="sudo make -f .nvim/Makefile"
 
 # git
 alias \
@@ -52,7 +53,8 @@ alias \
     gm='git merge' \
     gsb='git submodule' \
     ghist='git log --follow -p --' \
-    grb='git rebase'
+    grb='git rebase' \
+    gcl='git clean -dfx'
 
 # files
 alias \
@@ -168,7 +170,7 @@ if [ -n "${BASH}" ]; then
         eval "$function"
     }
     make-completion-wrapper _make _make_f make -f .nvim/Makefile
-    complete -F _make_f ide
+    complete -F _make_f ide ide_s
     # cdj
     _cdj() { COMPREPLY=($(cd $HOME/prog ; compgen -d "$2")) ; }
     complete -F _cdj cdj

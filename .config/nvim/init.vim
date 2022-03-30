@@ -135,6 +135,9 @@ let g:ale_cpp_cpplint_options =
       \'--linelength=120 --filter=-legal/copyright,-readability/todo,
       \-runtime/references,-build/include_order,-build/include'
 let g:ale_cpp_cc_options = '-std=c++17 -Wall -Wextra -pedantic'
+" python
+let g:ale_python_flake8_options = '--max-line-length=120'
+" completion
 set omnifunc=ale#completion#OmniFunc
 nm <leader>l <Plug>(ale_lint)
 nm <leader>a <Plug>(ale_toggle)
@@ -345,7 +348,7 @@ nn <silent> <expr> <C-l> !exists('b:SplitResize') ? '<C-w><C-l>' : ':vert res +1
 nn gr :call ToggleResizeSplitMode()<CR>
 " }}}
 
-" {{{ GREPPING
+" {{{ GREP
 if executable('rg')
   set grepprg=rg-vim.sh
 
@@ -376,6 +379,7 @@ if executable('rg')
   command! -nargs=1 QuickGrep call QuickGrep(<f-args>, "all")
   nn <leader>gg :QuickGrep<space>""<left>
   vn <leader>gg y:QuickGrep "<C-r>+"<CR>
+  nn <leader>g/ :QuickGrep<space>"<C-r>0"<CR>
 
   command! -nargs=1 QuickGrepFile call QuickGrep(<f-args>, "file")
   nn <leader>gf :QuickGrepFile<space>""<left>
@@ -504,4 +508,7 @@ nn <leader>r !rm ~/.local/share/nvim/swap/*.swp<cr>
 
 " prevent 'file changed' warnings
 autocmd FileChangedShell * :
+
+" close all buffers except opened one
+command! BufOnly silent! execute "%bd|e#|bd#"
 " }}}

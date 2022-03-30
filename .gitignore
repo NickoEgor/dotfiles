@@ -45,6 +45,7 @@
 !.config/ncmpcpp
 !.config/newsboat
 !.config/nvim
+!.config/pylintrc
 !.config/polybar
 !.config/qutebrowser
 !.config/redshift
