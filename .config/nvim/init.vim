@@ -350,7 +350,7 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREP
 if executable('rg')
-  set grepprg=rg-vim.sh
+  set grepprg=rg-vim.sh\ -d\ 'venv,ci,package,tests,llvm'
 
   func! QuickGrep(pattern, type)
     if a:pattern == '""'

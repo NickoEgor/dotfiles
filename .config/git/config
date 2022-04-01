@@ -1,10 +1,20 @@
 [core]
-	excludesfile = ~/.config/git/ignore
-[init]
-	defaultBranch = master
+    excludesfile = ~/.config/git/ignore
 [pull]
-	ff = only
+    ff = only
+[init]
+    defaultBranch = master
 [push]
-	default = current
+    default = current
 [http]
-	sslVerify = false
+    sslVerify = false
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    interactive = auto
+    ui = true
+    pager = true
+
+# To manage bare repo:
+# git config status.showUntrackedFiles no

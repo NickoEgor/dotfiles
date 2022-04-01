@@ -1,29 +1,44 @@
 #!/bin/bash
 
+# nvidia card hacks
+nvidia_lock="$XDG_DATA_HOME/nvidia_lock"
+if [ -f "$nvidia_lock" ]; then
+    echo "NVIDIA lock detected"
+    xrandr --setprovideroutputsource modesetting NVIDIA-0
+    xrandr --auto
+fi
+
 # autostart
-dunst &
-picom &
-sxhkd &
+# dunst &
+# picom &
+# sxhkd &
 # unclutter &
 # greenclip daemon &
-# safeeyes &
 # suspender &
 # pgrep transmission-da || transmission-daemon &
+# nm-applet &
+# safeeyes &
 # redshift &
-nm-applet &
 
-sleep 3 && exec polybar -r notebar &
+# WM autostart
+if [ "$WM" = "dwm" ]; then
+    dwmbar &
+    dwmlistener.sh &
+    # sleep 5 && exec polybar -r notebar &
+fi
 
 # Xorg settings
-xwallpaper --stretch "$XDG_DATA_HOME/wallpaper"
-# xmodmap -e "keycode 135 = Super_R Menu"   # remap 'menu' button
+# xwallpaper --stretch "$XDG_DATA_HOME/wallpaper"
 xset r rate 200 35                        # keyboard speed
 xsetroot -cursor_name left_ptr            # default cursor
-# xset s on                                 # enable screensaver
-# xset s 600                                # seconds before screensave
-xrdb -merge "$XDG_CONFIG_HOME/Xresources" # apply xresources
+xset s on                                 # enable screensaver
+xset s 600                                # seconds before screensave
+# xrdb -merge "$XDG_CONFIG_HOME/Xresources" # apply xresources
 # xss-lock -- physlock -ms &                # set screen lock
 
-/usr/bin/vmware-user
+# Xorg autostart
+if [ -f "$XDG_CONFIG_HOME/autostart/on_x11.sh" ]; then
+    sleep 10 && "$XDG_CONFIG_HOME/autostart/on_x11.sh" &
+fi
 
-exec "$WM"
+[ -n "$WM" ] && exec "$WM"
