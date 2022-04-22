@@ -22,8 +22,7 @@ for dir in "${ignored_dirs[@]}"; do
   kw_args+=("-g" "!$dir")
 done
 
-set -x
-rg --vimgrep -F --hidden --no-messages \
-    -g '!.git' -g '!build' \
+rg --vimgrep -F -S --hidden --no-messages \
+    -g '!.git' -g '!build' -g '!node_modules' \
     "${kw_args[@]}" \
     "${pos_args[@]}"

@@ -1,17 +1,14 @@
 #!/bin/sh
 
-# path
-export GOPATH="$HOME/prog/go"
-export PATH="$PATH:$HOME/.local/bin:$HOME/.local/bin/specific:$GOPATH/bin"
-
 # programs
 export SHELL="/bin/bash"
-# export TERMINAL="st"
+export TERMINAL="gnome-terminal"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 export BROWSER="firefox"
 export READER="zathura"
-# export WM="dwm"
+export WM=""
+export WMBAR=""
 
 # XDG directories
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -36,29 +33,31 @@ export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
-# program settings
+# settings
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export GOPATH="$HOME/prog/go"
 export INPUTRC="$XDG_CONFIG_HOME/inputrc"
 export LESSHISTFILE="-"
 export MANPATH="$MANPATH:$XDG_DATA_HOME/man:$XDG_CACHE_HOME/cppman/cppreference.com"
 export MERGETOOL="nvim -d"
 export PYLINTHOME="$XDG_CACHE_HOME/pylint"
 export PYLINTRC="$XDG_CONFIG_HOME/pylintrc"
-export SYSTEMD_PAGES=less
+export RANDFILE="$XDG_CACHE_HOME/rnd"
+export SYSTEMD_PAGER=less
 export TERMINFO="$XDG_DATA_HOME/terminfo"
 export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+export VIMINIT="source $XDG_CONFIG_HOME/nvim/init.vim"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-# export ELINKS_CONFDIR="$XDG_CONFIG_HOME/elinks"
-# export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
-# export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
-# export RANDFILE="$XDG_CACHE_HOME/rnd"
-# export R_PROFILE_USER="$XDG_CONFIG_HOME/Rprofile"
-# export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
-# export SXHKD_SHELL="/bin/bash"
-# export TS_SLOTS=3
-# export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
-# export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority" ## NOTE: do not use with gdm, bc it breaks login
+
+# path
+export PATH="$PATH:$HOME/.local/bin:$HOME/.local/bin/user:$GOPATH/bin"
+
+if [ -f "$XDG_CONFIG_HOME/autostart/on_login.sh" ]; then
+    source "$XDG_CONFIG_HOME/autostart/on_login.sh"
+fi
 
 if [ "$(tty)" = "/dev/tty1" ] && [ -n "$WM" ]; then
-	pgrep -x "$WM" || exec startx 1>/dev/null 2>/dev/null
+    pgrep -x "$WM" || exec startx \
+        1>"$XDG_CACHE_HOME/Xorg.1.log" \
+        2>"$XDG_CACHE_HOME/Xorg.2.log"
 fi

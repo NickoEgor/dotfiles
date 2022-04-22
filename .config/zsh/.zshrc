@@ -20,9 +20,18 @@ bindkey -M vicmd '^J' history-beginning-search-forward # forward search in vi co
 bindkey -M viins '^J' history-beginning-search-forward # forward search in vi insert mode
 
 # fzf history search
-[ -f "/usr/share/fzf/key-bindings.zsh" ] && source "/usr/share/fzf/key-bindings.zsh"
-[ -f "/usr/share/fzf/shell/key-bindings.zsh" ] && source "/usr/share/fzf/shell/key-bindings.zsh"
-[ -f "/usr/share/doc/fzf/examples/key-bindings.zsh" ] && source "/usr/share/doc/fzf/examples/key-bindings.zsh"
+fzf_binds=(
+    "/usr/share/fzf/key-bindings.zsh"
+    "/usr/share/fzf/shell/key-bindings.zsh"
+    "/usr/share/doc/fzf/examples/key-bindings.zsh"
+)
+if [ -f "${fzf_binds[0]}" ]; then
+    source "${fzf_binds[0]}"
+elif [ -f "${fzf_binds[1]}" ]; then
+    source "${fzf_binds[1]}"
+elif [ -f "${fzf_binds[2]}" ]; then
+    source "${fzf_binds[3]}"
+fi
 bindkey -M viins '^R' fzf-history-widget
 bindkey -M vicmd '^R' fzf-history-widget
 
@@ -97,8 +106,16 @@ zle-line-init() { zle -K viins; _set_beam_cursor }
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 bindkey '^ ' autosuggest-accept
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh || \
-    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+autosuggests=(
+    "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+)
+if [ -f "${autosuggests[0]}" ]; then
+    source "${autosuggests[0]}"
+elif [ -f "${autosuggests[1]}" ]; then
+    source "${autosuggests[1]}"
+fi
 
 # syntax highlight
 syntax_highlighting_script="/usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"

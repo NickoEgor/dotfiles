@@ -11,30 +11,31 @@ alias \
     ll='ls -lsh' \
     l='ls -lAsh'
 
-# progs
+# system progs
 alias \
     v='${EDITOR}' \
     sv='sudo ${EDITOR}' \
-    sp='sudo pacman' \
     sc='systemctl' \
     scu='systemctl --user' \
     ssc='sudo systemctl' \
-    fm='vifmrun' \
-    mkd='mkdir -pv' \
-    smkd='sudo mkdir -pv' \
-    rst='reset && source ~/.bashrc && stty sane && tput cvvis' \
-    cp='cp -ri' \
     p3='python3' \
+    cp='cp -ri' \
+    mim='file --mime-type'
+
+# other progs
+alias \
+    dg='/usr/bin/git --git-dir="${HOME}/prog/df" --work-tree="${HOME}"' \
+    sp='sudo pacman' \
+    fm='vifmrun' \
     ff='ffplay -autoexit -nodisp' \
+    rst='reset && source ~/.bashrc && stty sane && tput cvvis' \
     xo='xdg-open' \
-    mim='file --mime-type' \
     shr='sshrc' \
     ide="make -f .nvim/Makefile" \
-    ide_s="sudo make -f .nvim/Makefile"
+    ides="sudo make -f .nvim/Makefile"
 
 # git
 alias \
-    dg='/usr/bin/git --git-dir="${HOME}/prog/df" --work-tree="${HOME}"' \
     gst='git status' \
     gd='git diff' \
     gds='git diff --staged' \
@@ -54,6 +55,8 @@ alias \
     gsb='git submodule' \
     ghist='git log --follow -p --' \
     grb='git rebase' \
+    gff='git log --full-history --' \
+    gff1='git log --full-history -1 --' \
     gcl='git clean -dfx'
 
 # files
@@ -70,14 +73,16 @@ alias \
     vh='${EDITOR} ${HISTFILE}' \
     vr='${EDITOR} ${XDG_CONFIG_HOME}/Xresources' \
     vg='${EDITOR} .gitignore' \
-    vt='${EDITOR} TODO' \
-    vw='${EDITOR} ~/prog/env/dwm/config.h'
+    vt='${EDITOR} TODO.md' \
+    vw='${EDITOR} ~/prog/env/dwm/config.h' \
+    v_='${EDITOR} $_'
 
 # directories
 alias \
     cdb='cd ~/.local/bin' \
     cds='cd ${XDG_DATA_HOME}' \
-    cdc='cd ${XDG_CONFIG_HOME}'
+    cdc='cd ${XDG_CONFIG_HOME}' \
+    cd_='cd $_'
 alias \
     cdB='cd "$(xdg-user-dir BOOKS)"' \
     cdx='cd "$(xdg-user-dir DOCUMENTS)"' \
@@ -99,31 +104,28 @@ alias \
 
 # utils
 cdj() {
-  cd "$HOME/prog"
-  [ -n "$1" ] && cd "$1"
+  cd "$HOME/prog" || return 1
+  [ -n "$1" ] && cd "$1" || return 1
 }
 
 scr() {
     bindir="$HOME/.local/bin"
-    file="$(ls $bindir | fzf)"
-    [ ! -z "$file" ] && $EDITOR "$bindir/$file"
+    file="$(cd "$bindir" || return 1 ; find . -type f | fzf)"
+    [ -n "$file" ] && $EDITOR "$bindir/$file"
 }
 
 snc() {
     watch -d grep -e Dirty: -e Writeback: /proc/meminfo
 }
 
-sf() {
-    du -a . | cut -f2 | grep "$1"
-}
-
 # completion
 if [ -n "${BASH}" ]; then
+    # completions for aliases
     source /usr/share/bash-completion/bash_completion
     completions="/usr/share/bash-completion/completions"
     # systemctl
     source ${completions}/systemctl
-    complete -F _systemctl systemctl sc ssc
+    complete -F _systemctl systemctl sc ssc scu
     # git
     source ${completions}/git
     __git_complete gd _git_diff
@@ -131,6 +133,7 @@ if [ -n "${BASH}" ]; then
     __git_complete gb _git_branch
     __git_complete gc _git_commit
     __git_complete gr _git_remote
+    __git_complete gm _git_merge
     __git_complete gst _git_status
     __git_complete gch _git_checkout
     __git_complete gps _git_push
@@ -139,6 +142,7 @@ if [ -n "${BASH}" ]; then
     __git_complete grb _git_rebase
     __git_complete gsh _git_stash
     __git_complete gcp _git_cherry_pick
+    __git_complete gsb _git_submodule
     # bare repo alias
     __git_complete dg git
     # pacman
@@ -153,7 +157,7 @@ if [ -n "${BASH}" ]; then
     fi
     # ide
     source ${completions}/make
-    make-completion-wrapper() {
+    make_completion_wrapper() {
         local function_name="$2"
         local arg_count=$(($#-3))
         local comp_function_name="$1"
@@ -164,14 +168,16 @@ if [ -n "${BASH}" ]; then
         COMP_WORDS=( "$@" \${COMP_WORDS[@]:1} )
         COMP_LINE=\"\${COMP_WORDS[*]}\"
         COMP_POINT=\"\${#COMP_LINE}\"
-        "$comp_function_name"
+        "$comp_function_name" "$1"
         return 0
     }"
         eval "$function"
     }
-    make-completion-wrapper _make _make_f make -f .nvim/Makefile
-    complete -F _make_f ide ide_s
+    make_completion_wrapper _make _make_f make -f .nvim/Makefile
+    complete -F _make_f ide ides
     # cdj
-    _cdj() { COMPREPLY=($(cd $HOME/prog ; compgen -d "$2")) ; }
+    _cdj() { COMPREPLY=($(cd "$HOME/prog" || return 1 ; compgen -d "$2")) ; }
     complete -F _cdj cdj
+elif [ -n "${ZSH_NAME}" ]; then
+    compdef sshrc=ssh shr=ssh
 fi

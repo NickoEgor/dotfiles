@@ -1,4 +1,4 @@
-" vim: fdm=marker fdl=0 ts=2 sw=2 sts=2
+" vim: fdm=marker fdl=0
 set nocompatible
 
 " set leader key
@@ -6,11 +6,12 @@ let mapleader=" "
 let maplocalleader=","
 
 " {{{ PLUGINS
-
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 
 " treeview
-Plug 'antoinemadec/FixCursorHold.nvim'
+if has('nvim')
+  Plug 'antoinemadec/FixCursorHold.nvim'
+endif
 Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-hijack.vim'
 nn <silent> <C-n> :Fern . -reveal=%<CR>
@@ -28,17 +29,16 @@ function! FernInit() abort
   nm <buffer><nowait> R <Plug>(fern-action-reload:all)
   nm <buffer><nowait> u <Plug>(fern-action-leave)
   nm <buffer><nowait> d <Plug>(fern-action-enter)
+  nm <buffer><nowait> c <Plug>(fern-action-cancel)
   nm <buffer> za <Plug>(fern-action-hidden:toggle)
+  nm <buffer> yy <Plug>(fern-action-yank:label)
+  nm <buffer> yb <Plug>(fern-action-yank)
 endfunction
 
 augroup FernGroup
   autocmd!
   autocmd FileType fern call FernInit()
 augroup END
-
-" buffer manipulation
-Plug 'rbgrouleff/bclose.vim'
-nn <silent> <leader>q :Bclose<CR>
 
 " comments
 Plug 'tpope/vim-commentary'
@@ -48,12 +48,6 @@ vm <C-_> <plug>Commentary<ESC>
 " improved quoting/parenthesizing
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat' " dot command for vim-surround
-Plug 'jiangmiao/auto-pairs'
-let g:AutoPairsShortcutToggle = ''
-
-" git
-" Plug 'tpope/vim-fugitive'
-" Plug 'airblade/vim-gitgutter'
 
 " highlight for substituion
 Plug 'markonm/traces.vim'
@@ -64,37 +58,9 @@ Plug 'vim-scripts/Rename2'
 " status line
 Plug 'itchyny/lightline.vim'
 let g:lightline = {
-  \   'active': {'left': [['mode', 'paste'], ['readonly', 'relativepath', 'modified']]},
-  \   'inactive': {'left': [['relativepath', 'modified']]}
+  \  'active': {'left': [['mode', 'paste'], ['readonly', 'relativepath', 'modified']]},
+  \  'inactive': {'left': [['relativepath', 'modified']]}
   \}
-
-" autocomplete
-" Plug 'Shougo/neoinclude.vim'
-" Plug 'jsfaint/coc-neoinclude'
-" Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-" " extensions
-" " let g:coc_global_extensions = ['coc-cmake', 'coc-json']
-" let g:coc_global_extensions = ['coc-cmake']
-" " tab completion
-" function! s:check_back_space() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~ '\s'
-" endfunction
-" ino <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" ino <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" ino <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" " remap keys for gotos
-" nm <silent> gd <Plug>(coc-definition)
-" nm <silent> gy <Plug>(coc-type-definition)
-" nm <silent> gi <Plug>(coc-implementation)
-" " refresh
-" ino <silent><expr> <C-space> coc#refresh()
-" " symbol renaming
-" nm <leader>rn <Plug>(coc-rename)
 
 " snippets
 Plug 'Shougo/neosnippet.vim'
@@ -106,18 +72,25 @@ im <C-k> <Plug>(neosnippet_expand_or_jump)
 smap <C-k> <Plug>(neosnippet_expand_or_jump)
 xm <C-k> <Plug>(neosnippet_expand_target)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+  \  "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " linting
 Plug 'w0rp/ale'
-let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'] }
 let g:ale_linters = {
-      \   'cpp': ['cpplint', 'cc', 'clangtidy', 'clang-format'],
-      \   'c': ['cc', 'clangtidy', 'clang-format'],
-      \   'sh': ['shfmt', 'shellcheck'],
-      \   'python': ['flake8', 'pylint'],
-      \   'tex': ['chktex'],
-      \}
+  \  'cpp': ['cpplint', 'cc', 'clangtidy', 'clangd'],
+  \  'c': ['cpplint', 'cc', 'clangtidy', 'clangd'],
+  \  'sh': ['shellcheck'],
+  \  'python': ['flake8', 'pylint'],
+  \  'tex': ['chktex'],
+  \}
+let g:ale_fixers = {
+  \  '*': ['remove_trailing_lines', 'trim_whitespace'],
+  \  'cpp': ['clangtidy', 'clang-format'],
+  \  'c': ['clangtidy', 'clang-format'],
+  \  'sh': ['shfmt'],
+  \  'python': ['autoimport', 'autoflake', 'isort', 'black',
+  \             'add_blank_lines_for_python_control_statements'],
+  \}
 let g:ale_set_highlights = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
@@ -131,90 +104,80 @@ let g:ale_tex_chktex_options = '-n13 -n26 -n44'
 " c/c++ options
 " NOTE: cpp headers issue
 let g:ale_c_parse_compile_commands = 1
-let g:ale_cpp_cpplint_options =
-      \'--linelength=120 --filter=-legal/copyright,-readability/todo,
-      \-runtime/references,-build/include_order,-build/include'
+let g:ale_c_cpplint_options =
+  \'--linelength=120 --filter=-legal/copyright,-legal/license,
+  \-whitespace/todo,-readability/todo,-runtime/references,
+  \-build/include_order,-build/include'
+let g:ale_cpp_cpplint_options = g:ale_c_cpplint_options
 let g:ale_cpp_cc_options = '-std=c++17 -Wall -Wextra -pedantic'
 " python
 let g:ale_python_flake8_options = '--max-line-length=120'
 " completion
 set omnifunc=ale#completion#OmniFunc
-nm <leader>l <Plug>(ale_lint)
-nm <leader>a <Plug>(ale_toggle)
-nm <leader>f <Plug>(ale_fix)
-nm <leader>d <Plug>(ale_detail)
-nm <leader>] <Plug>(ale_next)
-nm <leader>[ <Plug>(ale_previous)
-nm <leader>} <Plug>(ale_next_error)
-nm <leader>{ <Plug>(ale_previous_error)
+nm <localleader>l <Plug>(ale_lint)
+nm <localleader>t <Plug>(ale_toggle)
+nm <localleader>f <Plug>(ale_fix)
+nm <localleader>d <Plug>(ale_detail)
+nm <localleader>] <Plug>(ale_next)
+nm <localleader>[ <Plug>(ale_previous)
+nm <localleader>} <Plug>(ale_next_error)
+nm <localleader>{ <Plug>(ale_previous_error)
 
 " python
 Plug 'vim-scripts/indentpython.vim'
 
 " go
-" Plug 'fatih/vim-go'
-" au FileType go let g:go_fmt_fail_silently = 1
+Plug 'fatih/vim-go'
+au FileType go let g:go_fmt_fail_silently = 1
+au FileType go let g:go_fmt_autosave = 0
 
 " fzf
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+if filereadable('/usr/bin/fzf')
+  Plug '/usr/bin/fzf'
+else
+  Plug 'junegunn/fzf'
+endif
 Plug 'junegunn/fzf.vim'
 nn <silent> <C-b> :Buffers<CR>
 nn <silent> <leader>b :FZF<CR>
 
 " c++
-" Plug 'octol/vim-cpp-enhanced-highlight'
-" Plug 'rhysd/vim-clang-format'
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'rhysd/vim-clang-format'
 Plug 'derekwyatt/vim-fswitch'
-au FileType c,cpp nn <silent> <leader>s :FSHere<CR>
-
-" indentation
-" Plug 'Yggdroot/indentLine' " can break conceallevel
-" au FileType tex,markdown,json let g:indentLine_setColors = 0
-" au FileType tex,markdown,json let g:indentLine_enabled = 0
-
-" language switching
-Plug 'lyokha/vim-xkbswitch'
-let g:XkbSwitchEnabled = 1
-let g:XkbSwitchLib = '/usr/local/lib/libg3kbswitch.so'
-
-" highlight colors
-" Plug 'ap/vim-css-color'
-
-" " syntax files
-" Plug 'baskerville/vim-sxhkdrc'      " sxhkd
-" Plug 'tomlion/vim-solidity'         " solidity
-
-" markdown
-" Plug 'godlygeek/tabular'
-" Plug 'plasticboy/vim-markdown'
-
-" file picker
-" Plug 'vifm/vifm.vim'
+au FileType c,cpp nn <silent> <leader>o :FSHere<CR>
 
 " theme
+Plug 'Rigellute/shades-of-purple.vim'
 Plug 'liuchengxu/space-vim-dark'
-" Plug 'NLKNguyen/papercolor-theme'
-" Plug 'junegunn/seoul256.vim'
+Plug 'NLKNguyen/papercolor-theme'
+
+" git
+Plug 'airblade/vim-gitgutter'
+
+" additional plugins
+if filereadable(expand('<sfile>:p:h') . '/extra.vim')
+  exec "source " . expand('<sfile>:p:h') . '/extra.vim'
+endif
 
 call plug#end()
 
-filetype plugin on
-
+filetype plugin indent on
 " }}}
 
 " {{{ COLORTHEME
+" if has('nvim')
+"   set termguicolors
+" endif
+" colo shades_of_purple
+" let g:lightline = { 'colorscheme': 'shades_of_purple' }
+" ---
 colo space-vim-dark
-
+" ---
 " set t_Co=256
-set background=dark
+" set background=dark
 " colo PaperColor
-
-" let g:seoul256_background = 252
-" colo seoul256-light
-" --
-" set background=light
-" colo seoul256
-
+" ---
 hi Comment cterm=italic
 " }}}
 
@@ -236,10 +199,12 @@ set softtabstop=4   " width for Tab in inserting or deleting (Backspace)
 set smarttab
 set expandtab
 set autoindent
-set nolist
-" numbers
+" nonprintable characters
+set list
+set listchars=tab:>\ ,trail:·
+" line numbers
 set number
-set relativenumber
+set relativenumber  " NOTE: can cause slowdown in printing
 " info/swap/backup
 set viminfo="-"
 set nobackup
@@ -248,8 +213,9 @@ set noundofile
 " modeline
 set modeline
 set modelines=5
+" messages in last line
 set noshowmode
-set showcmd
+set noshowcmd
 " wildmenu
 set wildmenu
 set wildmode=longest,full
@@ -272,19 +238,27 @@ set spell spelllang=
 " file search
 set path+=**
 set wildignore+=*/build/*,*/.git/*,*/node_modules/*
-" local .vimrc support
-set exrc
-set secure
+" enable system clipboard
+set clipboard=unnamedplus
+" minimal lines before/after cursor
+set scrolloff=5
+" do not autoreload changed file
+set noautoread
+" highlight current line
+set cursorline
+" do not indent: N-s - namespaces, g0 - public/private/protected
+set cinoptions=N-s,g0
+" enable <> pair
+set matchpairs+=<:>
+" do not save quickfix to session file
+set sessionoptions-=blank
+" ignore local .vimrc
+set noexrc
+" shorten vim messages
+set shortmess=atT
 " misc
 set completeopt-=preview
-set clipboard=unnamedplus
-set scrolloff=5
 set hidden
-set noautoread
-" set cursorline
-set cinoptions=N-s,g0
-set matchpairs+=<:>
-set sessionoptions-=blank
 " }}}
 
 " {{{ MAPPINGS
@@ -297,12 +271,17 @@ xn P "_dP
 nn Q <nop>
 
 " annoying keys
-com! Q :q
 com! W :w
-com! WQ :wq
+com! Q :q
 com! Wq :wq
+com! WQ :wq
 com! Qa :qa
+com! QA :qa
 com! -bang Q :q<bang>
+com! -bang Wq :wq<bang>
+com! -bang WQ :wq<bang>
+com! -bang Qa :qa<bang>
+com! -bang QA :qa<bang>
 
 " normal mode bindings
 nn <silent> <leader>h :noh<Enter>
@@ -311,6 +290,10 @@ nn zq ZQ
 
 " buffer close
 nn <silent> <C-q> :close<CR>
+
+" newline without insert mode
+nn <leader>o o<ESC>
+nn <leader>O O<ESC>
 
 " }}}
 
@@ -350,14 +333,14 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREP
 if executable('rg')
-  set grepprg=rg-vim.sh\ -d\ 'venv,ci,package,tests,llvm'
+  set grepprg=rg-vim.sh
 
   func! QuickGrep(pattern, type)
     if a:pattern == '""'
       echo "Empty search string given"
       return 1
     endif
-    
+
     if a:type == 'all'
       exe "silent grep! " . a:pattern
     elseif a:type == 'file'
@@ -396,9 +379,9 @@ let g:netrw_banner = 0
 let g:netrw_list_hide = '^\./'
 let g:netrw_liststyle = 3
 let g:netrw_dirhistmax = 0
-nn <silent> <localleader><C-n> :Explore<CR>
-nn <silent> <localleader><leader>n :Lexplore<CR>
-nn <silent> <leader>_ <Plug>NetrwRefresh
+nn <silent> <localleader>N :Explore<CR>
+nn <silent> <localleader>n :Lexplore<CR>
+nn <silent> <localleader>_ <Plug>NetrwRefresh
 " }}}
 
 " {{{ TABS
@@ -408,9 +391,6 @@ nn <silent> tn :tabnew %<CR>
 nn <silent> tc :tabclose<CR>
 nn <silent> tH :tabmove -1<CR>
 nn <silent> tL :tabmove +1<CR>
-
-nn <silent> <Tab> :tabnext<CR>
-nn <silent> <S-Tab> :tabprev<CR>
 " }}}
 
 " {{{ SPELL
@@ -420,27 +400,25 @@ nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
 " }}}
 
 " {{{ SESSIONS
-nn <silent> <leader>mm :!mkdir .nvim<CR>
-nn <silent> <leader>ms :mksession! .nvim/session.vim <bar> echo "Session saved"<CR>
-nn <silent> <leader>ml :source .nvim/session.vim<CR>
-nn <silent> <leader>md :!rm .nvim/session.vim<CR>
+nn <silent> <leader>s :mksession! .nvim/session.vim <bar> echo "Session saved"<CR>
+nn <silent> <leader>l :source .nvim/session.vim<CR>
+nn <silent> <leader>r :!rm .nvim/session.vim<CR><CR>:echo "Session removed"<CR>
 " }}}
 
 " {{{ STYLES
-" python pep textwidth
-au FileType python setlocal textwidth=119 | setlocal colorcolumn=120
-" c++ style
-au FileType c,cpp,sh setlocal tabstop=2 | setlocal shiftwidth=2 | setlocal softtabstop=2 |
-      \ setlocal textwidth=119 | setlocal colorcolumn=120
-" cmake, js, yaml, proto
-au FileType cmake,javascript,typescript,yaml,proto
-      \ setlocal tabstop=2 | setlocal shiftwidth=2
+" textwidth
+au FileType c,cpp,sh,python setlocal textwidth=120 | setlocal colorcolumn=120
+" tab style (4 spaces)
+au FileType c,cpp,sh setlocal tabstop=4 | setlocal shiftwidth=4 | setlocal softtabstop=4
+" tab style (2 spaces)
+au FileType vim,cmake,javascript,typescript,yaml,proto
+  \  setlocal tabstop=2 | setlocal shiftwidth=2 | setlocal softtabstop=2
 " }}}
 
 " {{{ FORMATTERS
 " c/c++
-au FileType c,cpp,javascript,typescript nn <buffer> <C-f> :ClangFormat<CR>
-au FileType c,cpp,javascript,typescript vn <buffer> <C-f> :ClangFormat<CR>
+au FileType c,cpp,javascript,typescript,proto nn <buffer> <C-f> :ClangFormat<CR>
+au FileType c,cpp,javascript,typescript,proto vn <buffer> <C-f> :ClangFormat<CR>
 " shell
 au FileType sh nn <buffer> <C-f> :%!shfmt<CR>
 au FileType sh vn <buffer> <C-f> :%!shfmt<CR>
@@ -451,6 +429,9 @@ au FileType json vn <buffer> <C-f> :%!jq<CR>
 au FileType yaml,html,css nn <buffer> <C-f> :!prettier --write %<CR>
 " cmake
 au FileType cmake nn <buffer> <C-f> :!cmake-format --line-width 120 -i % <CR><CR>:e<CR>
+" xml
+au FileType xml nn <buffer> <C-f> :%! xmllint --format --recover - 2>/dev/null<CR>
+au FileType xml vn <buffer> <C-f> :! xmllint --format --recover - 2>/dev/null<CR>
 " }}}
 
 " {{{ MISC
@@ -467,7 +448,6 @@ au FileType c,cpp setlocal commentstring=//\ %s
 
 " showing results
 au FileType tex,markdown nn <leader>o :!openout %<CR><CR>
-au FileType c,cpp nn <leader>o :!./%:r<CR>
 
 " tex
 let g:tex_flavor = "latex" " set filetype for tex
@@ -478,8 +458,7 @@ au VimLeave *.tex !texclear %:p:h
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
 " update ctags
-com! Ctags execute "!mkdir -p .nvim ; updtags.sh . .nvim/tags"
-nn <silent> <leader>t :Ctags<CR>
+nn <silent> <leader>t :!updtags.sh .nvim/tags .<CR>
 
 " search visually selected text with '//'
 vn // y/\V<C-R>=escape(@",'/\')<CR><CR>
@@ -491,24 +470,53 @@ vn <leader>s y:%s/<C-R>+//g<Left><Left>
 au FileType c,cpp setlocal keywordprg=cppman
 
 " git blame
-nn gb :execute "! git blame -L " . max([eval(line(".")-5), 1]) . ",+10 %"<cr>
-
-" large files work
-func! LargeFile()
-  syntax off
-  filetype off
-  " set noundofile
-  " set noswapfile
-  set noloadplugins
-endfunc
-command! -nargs=0 LargeFile call LargeFile()
+nn gb :execute "! git blame -L " . max([eval(line(".")-5), 1]) . ",+10 %"<CR>
 
 " remove swaps
-nn <leader>r !rm ~/.local/share/nvim/swap/*.swp<cr>
+nn <leader>D :!rm ~/.local/share/nvim/swap/*.swp<CR>
 
 " prevent 'file changed' warnings
 autocmd FileChangedShell * :
 
 " close all buffers except opened one
 command! BufOnly silent! execute "%bd|e#|bd#"
+
+" create '.nvim' directory
+nn <silent> <leader>d :!mkdir .nvim<CR>
+" }}}
+
+" {{{ LOCAL VIMRC
+" NOTE: should be in the end to override previous options
+if filereadable(".nvim/init.vim")
+  exec "source " . ".nvim/init.vim"
+endif
+" }}}
+
+" {{{ NOTES
+" # reformat file for linux/utf-8
+" set fileformat=unix fileencoding=utf-8
+" set ff=unix fenc=utf-8
+"
+" # open nvim without config
+" $ nvim --clean                      # since v8
+" $ nvim -u DEFAULTS -U NONE -i NONE  # before v8
+"
+" # vim-plug installation
+" 1. vim
+" $ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+"       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" 2. neovim
+" $ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+"       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+" 3. after updating plugins in neovim - create link for vim
+" $ ln -s ~/.local/share/nvim/plugged ~/.vim/plugged
+"
+" # YCM installation
+" > don't forget to use corresponding gcc version
+" $ cd .vim/plugged/YouCompleteMe/
+" $ python3 install.py --clang-completer
+"
+" # fzf installation (locally, no package manager)
+" git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+" ~/.fzf/install
 " }}}
