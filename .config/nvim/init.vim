@@ -76,9 +76,10 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 
 " linting
 Plug 'w0rp/ale'
+" NOTE: do not use 'clangd' linter as it's too heavy
 let g:ale_linters = {
-  \  'cpp': ['cpplint', 'cc', 'clangtidy', 'clangd'],
-  \  'c': ['cpplint', 'cc', 'clangtidy', 'clangd'],
+  \  'cpp': ['cpplint', 'cc', 'clangtidy'],
+  \  'c': ['cpplint', 'cc', 'clangtidy'],
   \  'sh': ['shellcheck'],
   \  'python': ['flake8', 'pylint'],
   \  'tex': ['chktex'],
@@ -88,8 +89,7 @@ let g:ale_fixers = {
   \  'cpp': ['clangtidy', 'clang-format'],
   \  'c': ['clangtidy', 'clang-format'],
   \  'sh': ['shfmt'],
-  \  'python': ['autoimport', 'autoflake', 'isort', 'black',
-  \             'add_blank_lines_for_python_control_statements'],
+  \  'python': ['autoimport', 'isort', 'autoflake', 'autopep8']
   \}
 let g:ale_set_highlights = 1
 let g:ale_lint_on_text_changed = 'never'
@@ -112,6 +112,7 @@ let g:ale_cpp_cpplint_options = g:ale_c_cpplint_options
 let g:ale_cpp_cc_options = '-std=c++17 -Wall -Wextra -pedantic'
 " python
 let g:ale_python_flake8_options = '--max-line-length=120'
+let g:ale_python_autopep8_options = '--max-line-length=120'
 " completion
 set omnifunc=ale#completion#OmniFunc
 nm <localleader>l <Plug>(ale_lint)
@@ -154,6 +155,20 @@ Plug 'NLKNguyen/papercolor-theme'
 
 " git
 Plug 'airblade/vim-gitgutter'
+
+if isdirectory(".nvim")
+  " auto tag management
+  Plug 'ludovicchabant/vim-gutentags'
+  let g:gutentags_ctags_executable = 'guten.sh'
+  let g:gutentags_ctags_tagfile = '.nvim/tags'
+endif
+
+" markdown
+Plug 'plasticboy/vim-markdown'
+
+" aligning text
+" NOTE: http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+Plug 'godlygeek/tabular'
 
 " additional plugins
 if filereadable(expand('<sfile>:p:h') . '/extra.vim')
@@ -457,7 +472,7 @@ au VimLeave *.tex !texclear %:p:h
 " autoremove trailing whitespaces
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
-" update ctags
+" update ctags manually
 nn <silent> <leader>t :!updtags.sh .nvim/tags .<CR>
 
 " search visually selected text with '//'
@@ -480,9 +495,6 @@ autocmd FileChangedShell * :
 
 " close all buffers except opened one
 command! BufOnly silent! execute "%bd|e#|bd#"
-
-" create '.nvim' directory
-nn <silent> <leader>d :!mkdir .nvim<CR>
 " }}}
 
 " {{{ LOCAL VIMRC
@@ -517,6 +529,21 @@ endif
 " $ python3 install.py --clang-completer
 "
 " # fzf installation (locally, no package manager)
-" git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-" ~/.fzf/install
+" $ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+" $ ~/.fzf/install
+"
+" # sshrc installation (no package manager)
+" $ curl -O https://raw.githubusercontent.com/cdown/sshrc/master/sshrc
+" $ chmod +x sshrc && sudo mv sshrc /usr/local/bin
+"
+" # pycscope installation (locally)
+" $ pip install git+https://github.com/portante/pycscope
+"
+" # ctags build/install (no package manager)
+" $ git clone https://github.com/universal-ctags/ctags.git
+" $ cd ctags
+" $ ./autogen.sh
+" $ ./configure --prefix=/where/you/want # defaults to /usr/local
+" $ make
+" $ make install # may require extra privileges depending on where to install
 " }}}
