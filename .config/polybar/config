@@ -21,46 +21,38 @@ background = ${xrdb:color256:#1d2021}
 foreground = ${xrdb:color257:#ebdbb2}
 
 ; bars
-[bar/basebar]
+[bar/notebar]
 background = ${colors.background}
 foreground = ${colors.foreground}
+
 tray-position = right
-tray-padding = 0
+tray-padding = 3
+
 module-margin = 1
-wm-restack = bspwm
-font-0 = monospace:pixelsize=11;1
-scroll-up = bspwm-desknext
-scroll-down = bspwm-deskprev
 
-[bar/horizontal]
-inherit = bar/basebar
-monitor = HDMI2
-modules-left = bspwm xwindow
-modules-right = cpu alsa wired-network xkeyboard date
+enable-ipc = true
 
-[bar/vertical]
-inherit = bar/basebar
-monitor = DP2
-modules-left = bspwm
-modules-right = alsa wired-network xkeyboard date
+font-0 = monospace:pixelsize=12;1
+font-1 = JoyPixels:scale=9
+font-2 = Noto Color Emoji:scale=9
 
-[bar/notebar]
-inherit = bar/basebar
-modules-left = bspwm xwindow
-modules-right = cpu backlight-acpi alsa wlan battery xkeyboard date
-font-0 = monospace:pixelsize=13;1
+modules-left = dwm
+; modules-right = mpd alsa backlight wlan memory cpu battery temperature xkeyboard date
+modules-right = memory cpu xkeyboard date
+
+override-redirect = false
 
 ; modules
 [module/xwindow]
 type = internal/xwindow
-label = %title:0:45:...%
+label = %title:0:30:...%
 format-foreground = ${colors.blue}
 
 [module/xkeyboard]
 type = internal/xkeyboard
 blacklist-0 = num lock
 blacklist-1 = caps lock
-format = <label-layout>
+format = 🌍 <label-layout>
 format-spacing = 0
 label-layout = %name%
 label-layout-padding = 0
@@ -78,7 +70,7 @@ ramp-volume-2 = 🔊
 [module/cpu]
 type = internal/cpu
 format = <label> <ramp-coreload>
-label = CPU %percentage%%
+label = 🖥 %percentage%%
 
 ramp-coreload-spacing = 1
 ramp-coreload-0 = ▁
@@ -90,34 +82,12 @@ ramp-coreload-5 = ▆
 ramp-coreload-6 = ▇
 ramp-coreload-7 = █
 
-[module/bspwm]
-type = internal/bspwm
-pin-workspaces = false
-
-label-focused = %index%
-label-focused-foreground = ${colors.black}
-label-focused-background = ${colors.blue}
-label-focused-padding = 1
-
-label-occupied = %index%
-label-occupied-foreground = ${colors.black}
-label-occupied-background = ${colors.magenta}
-label-occupied-padding = 1
-
-label-urgent = %index%!
-label-urgent-background = ${colors.red}
-label-urgent-padding = 1
-
-label-empty = %index%
-label-empty-foreground = ${colors.lightgray}
-label-empty-padding = 1
-
 [module/date]
 type = internal/date
 interval = 60
 date = "%Y %b %d (%a)"
 time = "%I:%M%p"
-label = %date% %time%
+label = %{A1:$TERMINAL -c dropdown -e showcalendar:}🗓 %date% %time%%{A}
 
 [module/wired-network]
 type = internal/network
@@ -126,21 +96,17 @@ label-connected = 📶 %local_ip%
 label-disconnected = not connected
 
 ; notebook
-[module/xbacklight]
+[module/backlight]
 type = internal/backlight
 card = intel_backlight
 format = <ramp> <label>
+enable-scroll = true
 
 ramp-0 = 🌑
 ramp-1 = 🌒
 ramp-2 = 🌓
 ramp-3 = 🌔
 ramp-4 = 🌕
-
-[module/backlight-acpi]
-inherit = module/xbacklight
-type = internal/backlight
-card = intel_backlight
 
 [module/battery]
 type = internal/battery
@@ -162,3 +128,77 @@ format-connected = 📡 <label-connected>
 label-connected = %local_ip%
 format-disconnected = <label-disconnected>
 label-disconnected = 🛑 no wifi
+
+[module/mpd]
+type = internal/mpd
+format-online = %{A1:mpc toggle:}%{A3:st -e ncmpcpp:}%{A4:mpc prev:}%{A5:mpc next:}🎧 <label-song> <toggle>%{A}%{A}%{A}%{A}
+format-offline = "mpd is offline"
+
+icon-play = ▶
+icon-pause = ⏸
+icon-stop = ⏹
+
+label-song-maxlen = 30
+label-song-ellipsis = true
+
+[module/temperature]
+type = internal/temperature
+thermal-zone = 0
+warn-temperature = 60
+
+format = <ramp> <label>
+format-warn = <ramp> <label-warn>
+format-warn-underline = ${colors.red}
+
+label = %temperature-c%
+label-warn = %temperature-c%
+label-warn-foreground = ${colors.red}
+
+ramp-0 = 🌡
+ramp-1 = 🌡
+ramp-2 = 🌡
+
+[module/memory]
+type = internal/memory
+format = 🧠 <label>
+interval = 1
+
+[module/dwm]
+type = internal/dwm
+format = <label-tags> <label-layout> <label-floating> <label-title>
+
+enable-tags-click = true
+enable-tags-scroll = true
+tags-scroll-empty = false
+tags-scroll-reverse = false
+tags-scroll-wrap = true
+enable-layout-click = true
+enable-layout-scroll = true
+layout-scroll-wrap = true
+layout-scroll-reverse = true
+
+label-title = %title%
+label-title-padding = 0
+label-title-foreground = ${colors.foreground}
+label-title-maxlen = 25
+
+label-layout = %symbol%
+label-layout-padding = 0
+label-layout-foreground = ${colors.foreground}
+label-layout-background = ${colors.background}
+
+label-empty =
+
+label-focused-background = ${colors.darkblue}
+label-focused-foreground = ${colors.foreground}
+label-focused-padding = 1
+label-focused-font = 12
+
+label-visible-background = ${colors.background}
+label-visible-foreground = ${colors.foreground}
+label-visible-padding = 1
+label-visible-font = 12
+
+label-urgent-background = ${colors.red}
+label-urgent-padding = 1
+label-urgent-font = 12

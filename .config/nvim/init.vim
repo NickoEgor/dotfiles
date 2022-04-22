@@ -24,8 +24,11 @@ function! FernInit() abort
   nm <buffer><nowait> h <Plug>(fern-action-collapse)
   nm <buffer><nowait> s <Plug>(fern-action-open:split)
   nm <buffer><nowait> v <Plug>(fern-action-open:vsplit)
-  nm <buffer><nowait> r <Plug>(fern-action-reload)
-  nm <buffer> za <Plug>(fern-action-hidden-toggle)
+  nm <buffer><nowait> r <Plug>(fern-action-reload:cursor)
+  nm <buffer><nowait> R <Plug>(fern-action-reload:all)
+  nm <buffer><nowait> u <Plug>(fern-action-leave)
+  nm <buffer><nowait> d <Plug>(fern-action-enter)
+  nm <buffer> za <Plug>(fern-action-hidden:toggle)
 endfunction
 
 augroup FernGroup
@@ -48,6 +51,10 @@ Plug 'tpope/vim-repeat' " dot command for vim-surround
 Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsShortcutToggle = ''
 
+" git
+" Plug 'tpope/vim-fugitive'
+" Plug 'airblade/vim-gitgutter'
+
 " highlight for substituion
 Plug 'markonm/traces.vim'
 
@@ -56,33 +63,38 @@ Plug 'vim-scripts/Rename2'
 
 " status line
 Plug 'itchyny/lightline.vim'
+let g:lightline = {
+  \   'active': {'left': [['mode', 'paste'], ['readonly', 'relativepath', 'modified']]},
+  \   'inactive': {'left': [['relativepath', 'modified']]}
+  \}
 
 " autocomplete
-Plug 'Shougo/neoinclude.vim'
-Plug 'jsfaint/coc-neoinclude'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-" extensions
-let g:coc_global_extensions = ['coc-cmake', 'coc-json']
-" tab completion
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endfunction
-ino <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-ino <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-ino <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" remap keys for gotos
-nm <silent> gd <Plug>(coc-definition)
-nm <silent> gy <Plug>(coc-type-definition)
-nm <silent> gi <Plug>(coc-implementation)
-" refresh
-ino <silent><expr> <C-space> coc#refresh()
-" symbol renaming
-nm <leader>rn <Plug>(coc-rename)
+" Plug 'Shougo/neoinclude.vim'
+" Plug 'jsfaint/coc-neoinclude'
+" Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+" " extensions
+" " let g:coc_global_extensions = ['coc-cmake', 'coc-json']
+" let g:coc_global_extensions = ['coc-cmake']
+" " tab completion
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~ '\s'
+" endfunction
+" ino <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" ino <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" ino <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" " remap keys for gotos
+" nm <silent> gd <Plug>(coc-definition)
+" nm <silent> gy <Plug>(coc-type-definition)
+" nm <silent> gi <Plug>(coc-implementation)
+" " refresh
+" ino <silent><expr> <C-space> coc#refresh()
+" " symbol renaming
+" nm <leader>rn <Plug>(coc-rename)
 
 " snippets
 Plug 'Shougo/neosnippet.vim'
@@ -137,51 +149,49 @@ nm <leader>{ <Plug>(ale_previous_error)
 Plug 'vim-scripts/indentpython.vim'
 
 " go
-Plug 'fatih/vim-go'
-au FileType go let g:go_fmt_fail_silently = 1
+" Plug 'fatih/vim-go'
+" au FileType go let g:go_fmt_fail_silently = 1
 
 " fzf
-Plug '/usr/bin/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 nn <silent> <C-b> :Buffers<CR>
 nn <silent> <leader>b :FZF<CR>
 
 " c++
-Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'rhysd/vim-clang-format'
+" Plug 'octol/vim-cpp-enhanced-highlight'
+" Plug 'rhysd/vim-clang-format'
 Plug 'derekwyatt/vim-fswitch'
 au FileType c,cpp nn <silent> <leader>s :FSHere<CR>
 
-" tagbar
-Plug 'majutsushi/tagbar'
-" TODO: make focusable from any split
-nn <silent> <leader>T :TagbarToggle<CR>
-
 " indentation
-Plug 'Yggdroot/indentLine' " can break conceallevel
-au FileType tex,markdown,json let g:indentLine_setColors = 0
-au FileType tex,markdown,json let g:indentLine_enabled = 0
+" Plug 'Yggdroot/indentLine' " can break conceallevel
+" au FileType tex,markdown,json let g:indentLine_setColors = 0
+" au FileType tex,markdown,json let g:indentLine_enabled = 0
 
 " language switching
 Plug 'lyokha/vim-xkbswitch'
 let g:XkbSwitchEnabled = 1
+let g:XkbSwitchLib = '/usr/local/lib/libg3kbswitch.so'
 
 " highlight colors
-Plug 'ap/vim-css-color'
+" Plug 'ap/vim-css-color'
 
-" syntax files
-Plug 'baskerville/vim-sxhkdrc'      " sxhkd
-Plug 'tomlion/vim-solidity'         " solidity
+" " syntax files
+" Plug 'baskerville/vim-sxhkdrc'      " sxhkd
+" Plug 'tomlion/vim-solidity'         " solidity
 
 " markdown
-Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
+" Plug 'godlygeek/tabular'
+" Plug 'plasticboy/vim-markdown'
 
 " file picker
-Plug 'vifm/vifm.vim'
+" Plug 'vifm/vifm.vim'
 
 " theme
 Plug 'liuchengxu/space-vim-dark'
+" Plug 'NLKNguyen/papercolor-theme'
+" Plug 'junegunn/seoul256.vim'
 
 call plug#end()
 
@@ -191,6 +201,17 @@ filetype plugin on
 
 " {{{ COLORTHEME
 colo space-vim-dark
+
+" set t_Co=256
+set background=dark
+" colo PaperColor
+
+" let g:seoul256_background = 252
+" colo seoul256-light
+" --
+" set background=light
+" colo seoul256
+
 hi Comment cterm=italic
 " }}}
 
@@ -241,7 +262,8 @@ set splitright
 set conceallevel=0
 set concealcursor=nvic
 " tags
-set tags=./tags,tags,~/.local/share/tags
+set tags=./tags,tags,.nvim/tags,~/.local/share/tags
+set notagrelative " prevent '.nvim' prefix for tag
 " spell
 set spell spelllang=
 " file search
@@ -255,9 +277,11 @@ set completeopt-=preview
 set clipboard=unnamedplus
 set scrolloff=5
 set hidden
-set cursorline
+set noautoread
+" set cursorline
 set cinoptions=N-s,g0
 set matchpairs+=<:>
+set sessionoptions-=blank
 " }}}
 
 " {{{ MAPPINGS
@@ -323,25 +347,44 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREPPING
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ -g\ '!build'\ -g\ '!.git'\ -F\ --hidden\ --no-messages
+  set grepprg=rg-vim.sh
+
+  func! QuickGrep(pattern, type)
+    if a:pattern == '""'
+      echo "Empty search string given"
+      return 1
+    endif
+    
+    if a:type == 'all'
+      exe "silent grep! " . a:pattern
+    elseif a:type == 'file'
+      exe "silent grep! " . a:pattern . " " . expand('%')
+    elseif a:type == 'dir'
+      exe "silent grep! " . a:pattern . " " . expand('%:p:h')
+    endif
+
+    copen
+    if line('$') == 1 && getline(1) == ''
+      echo "No search results"
+      cclose
+    else
+      let l:nr=winnr()
+      exe l:nr . "wincmd J"
+    endif
+  endfunc
+
+  command! -nargs=1 QuickGrep call QuickGrep(<f-args>, "all")
+  nn <leader>gg :QuickGrep<space>""<left>
+  vn <leader>gg y:QuickGrep "<C-r>+"<CR>
+
+  command! -nargs=1 QuickGrepFile call QuickGrep(<f-args>, "file")
+  nn <leader>gf :QuickGrepFile<space>""<left>
+  vn <leader>gf y:QuickGrepFile "<C-r>+"<CR>
+
+  command! -nargs=1 QuickGrepDir call QuickGrep(<f-args>, "dir")
+  nn <leader>gd :QuickGrepDir<space>""<left>
+  vn <leader>gd y:QuickGrepDir "<C-r>+"<CR>
 endif
-
-func! QuickGrep(pattern)
-  " TODO: add check for empty string
-  exe "silent grep! " . a:pattern
-  copen
-  if line('$') == 1 && getline(1) == ''
-    echo "No search results"
-    cclose
-  else
-    let l:nr=winnr()
-    exe l:nr . "wincmd J"
-  endif
-endfunc
-
-command! -nargs=1 QuickGrep call QuickGrep(<f-args>)
-nn <leader>g :QuickGrep<space>""<left>
-vn <leader>g y:QuickGrep "<C-r>+"<CR>
 " }}}
 
 " {{{ FILETREE
@@ -357,10 +400,13 @@ nn <silent> <leader>_ <Plug>NetrwRefresh
 " {{{ TABS
 nn <silent> th :tabprev<CR>
 nn <silent> tl :tabnext<CR>
-nn <silent> tn :tabnew<CR>
+nn <silent> tn :tabnew %<CR>
 nn <silent> tc :tabclose<CR>
 nn <silent> tH :tabmove -1<CR>
 nn <silent> tL :tabmove +1<CR>
+
+nn <silent> <Tab> :tabnext<CR>
+nn <silent> <S-Tab> :tabprev<CR>
 " }}}
 
 " {{{ SPELL
@@ -370,16 +416,17 @@ nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
 " }}}
 
 " {{{ SESSIONS
-nn <silent> <leader>ms :mksession! <bar> echo "Session saved"<CR>
-nn <silent> <leader>ml :source Session.vim<CR>
-nn <silent> <leader>md :!rm Session.vim<CR>
+nn <silent> <leader>mm :!mkdir .nvim<CR>
+nn <silent> <leader>ms :mksession! .nvim/session.vim <bar> echo "Session saved"<CR>
+nn <silent> <leader>ml :source .nvim/session.vim<CR>
+nn <silent> <leader>md :!rm .nvim/session.vim<CR>
 " }}}
 
 " {{{ STYLES
 " python pep textwidth
 au FileType python setlocal textwidth=119 | setlocal colorcolumn=120
 " c++ style
-au FileType c,cpp setlocal tabstop=4 | setlocal shiftwidth=4 |
+au FileType c,cpp,sh setlocal tabstop=2 | setlocal shiftwidth=2 | setlocal softtabstop=2 |
       \ setlocal textwidth=119 | setlocal colorcolumn=120
 " cmake, js, yaml, proto
 au FileType cmake,javascript,typescript,yaml,proto
@@ -412,6 +459,7 @@ nn <leader>X :!chmod -x %<CR>
 " commentstring's
 au FileType xdefaults setlocal commentstring=!\ %s
 au FileType desktop,sxhkdrc,bib setlocal commentstring=#\ %s
+au FileType c,cpp setlocal commentstring=//\ %s
 
 " showing results
 au FileType tex,markdown nn <leader>o :!openout %<CR><CR>
@@ -426,7 +474,7 @@ au VimLeave *.tex !texclear %:p:h
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
 " update ctags
-com! Ctags execute "!updtags.sh"
+com! Ctags execute "!mkdir -p .nvim ; updtags.sh . .nvim/tags"
 nn <silent> <leader>t :Ctags<CR>
 
 " search visually selected text with '//'
@@ -437,23 +485,23 @@ vn <leader>s y:%s/<C-R>+//g<Left><Left>
 
 " use K for c++ man pages
 au FileType c,cpp setlocal keywordprg=cppman
-" }}}
 
-" {{{ TEMP (Ctrl not working)
-nn <silent> <expr> <A-h> !exists('b:SplitResize') ? '<C-w><C-h>' : ':vert res -1<CR>'
-nn <silent> <expr> <leader><leader>j !exists('b:SplitResize') ? '<C-w><C-j>' : ':res -1<CR>'
-nn <silent> <expr> <leader><leader>k !exists('b:SplitResize') ? '<C-w><C-k>' : ':res +1<CR>'
-nn <silent> <expr> <A-l> !exists('b:SplitResize') ? '<C-w><C-l>' : ':vert res +1<CR>'
-nn <leader><leader>o <C-o>
-nn <leader><leader>i <C-i>
-nn <leader><leader>v <C-v>
-nn <leader><leader>] <C-]>
-nn <A-r> <C-r>
-nn <A-a> <C-a>
-nn <A-x> <C-x>
-nn <A-w> <C-w>
-nm <A-f> <C-f>
-nn <silent> <leader><leader>n :Fern . -reveal=%<CR>
-im \\k <C-k>
-im \\f <C-x><C-f>
+" git blame
+nn gb :execute "! git blame -L " . max([eval(line(".")-5), 1]) . ",+10 %"<cr>
+
+" large files work
+func! LargeFile()
+  syntax off
+  filetype off
+  " set noundofile
+  " set noswapfile
+  set noloadplugins
+endfunc
+command! -nargs=0 LargeFile call LargeFile()
+
+" remove swaps
+nn <leader>r !rm ~/.local/share/nvim/swap/*.swp<cr>
+
+" prevent 'file changed' warnings
+autocmd FileChangedShell * :
 " }}}

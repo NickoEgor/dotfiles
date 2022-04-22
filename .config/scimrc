@@ -1,6 +1,0 @@
-# I use patched sc-im with support for config directory
-set autocalc
-set numeric
-set numeric_decimal=0
-set overlap
-set xlsx_readformulas

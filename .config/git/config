@@ -1,6 +1,10 @@
 [core]
 	excludesfile = ~/.config/git/ignore
+[init]
+	defaultBranch = master
 [pull]
 	ff = only
-[init]
-	defaultBranch = main
+[push]
+	default = current
+[http]
+	sslVerify = false

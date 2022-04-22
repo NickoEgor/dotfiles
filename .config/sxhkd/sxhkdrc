@@ -15,7 +15,7 @@ super + w
 
 # calendar
 super + shift + w
-    $TERMINAL -e calcurse
+    killall -q polybar ; setsid polybar -r notebar &
 
 # terminal
 super + {_,shift +} e

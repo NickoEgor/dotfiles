@@ -3,3 +3,4 @@ tags
 TODO
 .clangd
 .cache
+.nvim
