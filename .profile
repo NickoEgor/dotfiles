@@ -2,13 +2,16 @@
 
 # programs
 export SHELL="/bin/bash"
-export TERMINAL="gnome-terminal"
+export TERMINAL="st"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 export BROWSER="firefox"
 export READER="zathura"
-export WM=""
-export WMBAR=""
+
+# custom
+export WM=
+export WMBAR=
+export IDE_DIR=".ide"
 
 # XDG directories
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -52,10 +55,12 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 # path
 export PATH="$PATH:$HOME/.local/bin:$HOME/.local/bin/user:$GOPATH/bin"
 
+# login autostart
 if [ -f "$XDG_CONFIG_HOME/autostart/on_login.sh" ]; then
     source "$XDG_CONFIG_HOME/autostart/on_login.sh"
 fi
 
+# x11 start
 if [ "$(tty)" = "/dev/tty1" ] && [ -n "$WM" ]; then
     pgrep -x "$WM" || exec startx \
         1>"$XDG_CACHE_HOME/Xorg.1.log" \

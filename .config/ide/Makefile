@@ -1,6 +1,6 @@
 SHELL=/bin/bash
-IDE_DIR=$(CURDIR)/.nvim
 USER=$(shell whoami)
+IDE_DIR:=$(CURDIR)/${IDE_DIR}
 
 # targets with args
 # ifneq (,$(filter $(firstword $(MAKECMDGOALS)),<target1> <target2>...))

@@ -2,8 +2,13 @@
 set nocompatible
 
 " set leader key
-let mapleader=" "
-let maplocalleader=","
+let mapleader=' '
+let maplocalleader=','
+
+" ensure IDE directory is set
+if empty($IDE_DIR)
+  let $IDE_DIR='.ide'
+endif
 
 " {{{ PLUGINS
 call plug#begin()
@@ -72,7 +77,7 @@ im <C-k> <Plug>(neosnippet_expand_or_jump)
 smap <C-k> <Plug>(neosnippet_expand_or_jump)
 xm <C-k> <Plug>(neosnippet_expand_target)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-  \  "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+  \  '\<Plug>(neosnippet_expand_or_jump)' : '\<TAB>'
 
 " linting
 Plug 'w0rp/ale'
@@ -124,9 +129,6 @@ nm <localleader>[ <Plug>(ale_previous)
 nm <localleader>} <Plug>(ale_next_error)
 nm <localleader>{ <Plug>(ale_previous_error)
 
-" python
-Plug 'vim-scripts/indentpython.vim'
-
 " go
 Plug 'fatih/vim-go'
 au FileType go let g:go_fmt_fail_silently = 1
@@ -156,11 +158,15 @@ Plug 'NLKNguyen/papercolor-theme'
 " git
 Plug 'airblade/vim-gitgutter'
 
-if isdirectory(".nvim")
-  " auto tag management
-  Plug 'ludovicchabant/vim-gutentags'
+" auto tag management
+Plug 'ludovicchabant/vim-gutentags'
+if isdirectory($IDE_DIR)
   let g:gutentags_ctags_executable = 'guten.sh'
-  let g:gutentags_ctags_tagfile = '.nvim/tags'
+  let g:gutentags_ctags_tagfile = $IDE_DIR . '/tags'
+  " NOTE: to debug gutentags uncomment line below
+  " let g:gutentags_trace = 1
+else
+  let g:gutentags_dont_load = 1
 endif
 
 " markdown
@@ -172,7 +178,7 @@ Plug 'godlygeek/tabular'
 
 " additional plugins
 if filereadable(expand('<sfile>:p:h') . '/extra.vim')
-  exec "source " . expand('<sfile>:p:h') . '/extra.vim'
+  exec 'source ' . expand('<sfile>:p:h') . '/extra.vim'
 endif
 
 call plug#end()
@@ -221,7 +227,7 @@ set listchars=tab:>\ ,trail:·
 set number
 set relativenumber  " NOTE: can cause slowdown in printing
 " info/swap/backup
-set viminfo="-"
+set viminfo="-"     " NOTE: can't use single quotes here
 set nobackup
 set nowritebackup
 set noundofile
@@ -246,7 +252,7 @@ set splitright
 set conceallevel=0
 set concealcursor=nvic
 " tags
-set tags=./tags,tags,.nvim/tags,~/.local/share/tags
+set tags=./tags,tags,$IDE_DIR/tags,~/.local/share/tags
 set notagrelative " prevent '.nvim' prefix for tag
 " spell
 set spell spelllang=
@@ -307,8 +313,8 @@ nn zq ZQ
 nn <silent> <C-q> :close<CR>
 
 " newline without insert mode
-nn <leader>o o<ESC>
-nn <leader>O O<ESC>
+nn <localleader>o o<ESC>
+nn <localleader>O O<ESC>
 
 " }}}
 
@@ -316,13 +322,13 @@ nn <leader>O O<ESC>
 " NOTE: different cursors per mode
 if (&term!='linux')
   if exists('$TMUX')
-    let &t_SI = "\ePtmux;\e\e[6 q\e\\"
-    let &t_SR = "\ePtmux;\e\e[4 q\e\\"
-    let &t_EI = "\ePtmux;\e\e[2 q\e\\"
+    let &t_SI = '\ePtmux;\e\e[6 q\e\\'
+    let &t_SR = '\ePtmux;\e\e[4 q\e\\'
+    let &t_EI = '\ePtmux;\e\e[2 q\e\\'
   else
-    let &t_SI = "\e[6 q"
-    let &t_SR = "\e[4 q"
-    let &t_EI = "\e[2 q"
+    let &t_SI = '\e[6 q'
+    let &t_SR = '\e[4 q'
+    let &t_EI = '\e[2 q'
   endif
 endif
 " }}}
@@ -331,10 +337,10 @@ endif
 fun! ToggleResizeSplitMode()
   if !exists('b:SplitResize')
     let b:SplitResize=1
-    echo "Resizing enabled"
+    echo 'Resizing enabled'
   else
     unlet b:SplitResize
-    echo "Resizing disabled"
+    echo 'Resizing disabled'
   endif
 endfun
 
@@ -351,41 +357,41 @@ if executable('rg')
   set grepprg=rg-vim.sh
 
   func! QuickGrep(pattern, type)
-    if a:pattern == '""'
-      echo "Empty search string given"
+    if a:pattern == "''"
+      echo 'Empty search string given'
       return 1
     endif
 
     if a:type == 'all'
-      exe "silent grep! " . a:pattern
+      exe 'silent grep! ' . a:pattern
     elseif a:type == 'file'
-      exe "silent grep! " . a:pattern . " " . expand('%')
+      exe 'silent grep! ' . a:pattern . ' ' . expand('%')
     elseif a:type == 'dir'
-      exe "silent grep! " . a:pattern . " " . expand('%:p:h')
+      exe 'silent grep! ' . a:pattern . ' ' . expand('%:p:h')
     endif
 
     copen
     if line('$') == 1 && getline(1) == ''
-      echo "No search results"
+      echo 'No search results'
       cclose
     else
       let l:nr=winnr()
-      exe l:nr . "wincmd J"
+      exe l:nr . 'wincmd J'
     endif
   endfunc
 
-  command! -nargs=1 QuickGrep call QuickGrep(<f-args>, "all")
-  nn <leader>gg :QuickGrep<space>""<left>
-  vn <leader>gg y:QuickGrep "<C-r>+"<CR>
-  nn <leader>g/ :QuickGrep<space>"<C-r>0"<CR>
+  command! -nargs=1 QuickGrep call QuickGrep(<f-args>, 'all')
+  nn <leader>gg :QuickGrep<space>''<left>
+  vn <leader>gg y:QuickGrep '<C-r>+'<CR>
+  nn <leader>g/ :QuickGrep<space>'<C-r>0'<CR>
 
-  command! -nargs=1 QuickGrepFile call QuickGrep(<f-args>, "file")
-  nn <leader>gf :QuickGrepFile<space>""<left>
-  vn <leader>gf y:QuickGrepFile "<C-r>+"<CR>
+  command! -nargs=1 QuickGrepFile call QuickGrep(<f-args>, 'file')
+  nn <leader>gf :QuickGrepFile<space>''<left>
+  vn <leader>gf y:QuickGrepFile '<C-r>+'<CR>
 
-  command! -nargs=1 QuickGrepDir call QuickGrep(<f-args>, "dir")
-  nn <leader>gd :QuickGrepDir<space>""<left>
-  vn <leader>gd y:QuickGrepDir "<C-r>+"<CR>
+  command! -nargs=1 QuickGrepDir call QuickGrep(<f-args>, 'dir')
+  nn <leader>gd :QuickGrepDir<space>''<left>
+  vn <leader>gd y:QuickGrepDir '<C-r>+'<CR>
 endif
 " }}}
 
@@ -415,9 +421,9 @@ nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
 " }}}
 
 " {{{ SESSIONS
-nn <silent> <leader>s :mksession! .nvim/session.vim <bar> echo "Session saved"<CR>
-nn <silent> <leader>l :source .nvim/session.vim<CR>
-nn <silent> <leader>r :!rm .nvim/session.vim<CR><CR>:echo "Session removed"<CR>
+nn <silent> <leader>s :mksession! $IDE_DIR/session.vim <bar> echo 'Session saved'<CR>
+nn <silent> <leader>l :source $IDE_DIR/session.vim<CR>
+nn <silent> <leader>r :!rm $IDE_DIR/session.vim<CR><CR>:echo 'Session removed'<CR>
 " }}}
 
 " {{{ STYLES
@@ -465,7 +471,7 @@ au FileType c,cpp setlocal commentstring=//\ %s
 au FileType tex,markdown nn <leader>o :!openout %<CR><CR>
 
 " tex
-let g:tex_flavor = "latex" " set filetype for tex
+let g:tex_flavor = 'latex' " set filetype for tex
 au FileType tex nn <leader>c :!texclear %:p:h<CR><CR>
 au VimLeave *.tex !texclear %:p:h
 
@@ -473,7 +479,7 @@ au VimLeave *.tex !texclear %:p:h
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
 
 " update ctags manually
-nn <silent> <leader>t :!updtags.sh .nvim/tags .<CR>
+nn <silent> <leader>t :!updtags.sh $IDE_DIR/tags .<CR>
 
 " search visually selected text with '//'
 vn // y/\V<C-R>=escape(@",'/\')<CR><CR>
@@ -485,22 +491,22 @@ vn <leader>s y:%s/<C-R>+//g<Left><Left>
 au FileType c,cpp setlocal keywordprg=cppman
 
 " git blame
-nn gb :execute "! git blame -L " . max([eval(line(".")-5), 1]) . ",+10 %"<CR>
+nn gb :execute '! git blame -L ' . max([eval(line('.')-5), 1]) . ',+10 %'<CR>
 
 " remove swaps
-nn <leader>D :!rm ~/.local/share/nvim/swap/*.swp<CR>
+nn <leader>D :!rm ~/.local/share/nvim/swap/*<CR>
 
 " prevent 'file changed' warnings
 autocmd FileChangedShell * :
 
 " close all buffers except opened one
-command! BufOnly silent! execute "%bd|e#|bd#"
+command! BufOnly silent! execute '%bd|e#|bd#'
 " }}}
 
 " {{{ LOCAL VIMRC
 " NOTE: should be in the end to override previous options
-if filereadable(".nvim/init.vim")
-  exec "source " . ".nvim/init.vim"
+if filereadable($IDE_DIR . '/init.vim')
+  exec 'source '. $IDE_DIR . '/init.vim'
 endif
 " }}}
 
@@ -522,6 +528,12 @@ endif
 "       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 " 3. after updating plugins in neovim - create link for vim
 " $ ln -s ~/.local/share/nvim/plugged ~/.vim/plugged
+" 4. [optional] link vim setup for root
+" $ sudo mkdir -pv "/root/.local/share/nvim/{plugged,autoload}" "/root/.vim/"
+" $ sudo ln -s ~/.local/share/nvim/site/autoload /root/.local/share/nvim/site/autoload
+" $ sudo ln -s ~/.local/share/nvim/site/autoload /root/.vim/autoload
+" $ sudo ln -s ~/.local/share/nvim/plugged /root/.local/share/nvim/plugged
+" $ sudo ln -s ~/.local/share/nvim/plugged /root/.vim/plugged
 "
 " # YCM installation
 " > don't forget to use corresponding gcc version
