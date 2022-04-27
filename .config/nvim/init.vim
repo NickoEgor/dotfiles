@@ -85,6 +85,7 @@ Plug 'w0rp/ale'
 let g:ale_linters = {
   \  'cpp': ['cpplint', 'cc', 'clangtidy'],
   \  'c': ['cpplint', 'cc', 'clangtidy'],
+  \  'cmake': ['cmake_lint'],
   \  'sh': ['shellcheck'],
   \  'python': ['flake8', 'pylint'],
   \  'tex': ['chktex'],
@@ -93,6 +94,7 @@ let g:ale_fixers = {
   \  '*': ['remove_trailing_lines', 'trim_whitespace'],
   \  'cpp': ['clangtidy', 'clang-format'],
   \  'c': ['clangtidy', 'clang-format'],
+  \  'cmake': ['cmakeformat'],
   \  'sh': ['shfmt'],
   \  'python': ['autoimport', 'isort', 'autoflake', 'autopep8']
   \}
@@ -118,6 +120,11 @@ let g:ale_cpp_cc_options = '-std=c++17 -Wall -Wextra -pedantic'
 " python
 let g:ale_python_flake8_options = '--max-line-length=120'
 let g:ale_python_autopep8_options = '--max-line-length=120'
+" cmake
+let g:ale_cmake_cmake_lint_executable = 'cmake-lint'
+let g:ale_cmake_cmake_lint_options = '--line-width=120'
+let g:ale_cmake_cmakeformat_executable = 'cmake-format'
+let g:ale_cmake_cmakeformat_options = '--line-width=120'
 " completion
 set omnifunc=ale#completion#OmniFunc
 nm <localleader>l <Plug>(ale_lint)
@@ -277,6 +284,9 @@ set sessionoptions-=blank
 set noexrc
 " shorten vim messages
 set shortmess=atT
+" text width
+set textwidth=120
+set colorcolumn=120
 " misc
 set completeopt-=preview
 set hidden
@@ -427,10 +437,6 @@ nn <silent> <leader>r :!rm $IDE_DIR/session.vim<CR><CR>:echo 'Session removed'<C
 " }}}
 
 " {{{ STYLES
-" textwidth
-au FileType c,cpp,sh,python setlocal textwidth=120 | setlocal colorcolumn=120
-" tab style (4 spaces)
-au FileType c,cpp,sh setlocal tabstop=4 | setlocal shiftwidth=4 | setlocal softtabstop=4
 " tab style (2 spaces)
 au FileType vim,cmake,javascript,typescript,yaml,proto
   \  setlocal tabstop=2 | setlocal shiftwidth=2 | setlocal softtabstop=2
@@ -448,8 +454,6 @@ au FileType json nn <buffer> <C-f> :%!jq<CR>
 au FileType json vn <buffer> <C-f> :%!jq<CR>
 " yaml,html,css
 au FileType yaml,html,css nn <buffer> <C-f> :!prettier --write %<CR>
-" cmake
-au FileType cmake nn <buffer> <C-f> :!cmake-format --line-width 120 -i % <CR><CR>:e<CR>
 " xml
 au FileType xml nn <buffer> <C-f> :%! xmllint --format --recover - 2>/dev/null<CR>
 au FileType xml vn <buffer> <C-f> :! xmllint --format --recover - 2>/dev/null<CR>
@@ -514,6 +518,12 @@ endif
 " # reformat file for linux/utf-8
 " set fileformat=unix fileencoding=utf-8
 " set ff=unix fenc=utf-8
+"
+" # set tab width to other value (for example: 2)
+" set ts=2 | set sw=2 | set sts=2
+" au FileType sh setl ts=2 | setl sw=2 | setl sts=2
+" # disable expanding tabs to spaces
+" set noet
 "
 " # open nvim without config
 " $ nvim --clean                      # since v8

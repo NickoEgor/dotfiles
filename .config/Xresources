@@ -1,33 +1,33 @@
-Xcursor.size: 9
+Xcursor.size:   9
 xterm*faceName: monospace:pixelsize=18:antialias=true:autohint=true
 dmenu.selbackground: #004466
-st.alpha: 0.85
+st.alpha:       0.85
 
 ! Chalkboard
-st.background:    #29262f
-st.foreground:    #d9e6f2
-st.cursorColor:   #d9e6f2
+st.background:  #29262f
+st.foreground:  #d9e6f2
+st.cursorColor: #d9e6f2
 ! Black + DarkGrey
-st.color0:        #000000
-st.color8:        #323232
+st.color0:      #000000
+st.color8:      #323232
 ! DarkRed + Red
-st.color1:        #c37372
-st.color9:        #dbaaaa
+st.color1:      #c37372
+st.color9:      #dbaaaa
 ! DarkGreen + Green
-st.color2:        #72c373
-st.color10:       #aadbaa
+st.color2:      #72c373
+st.color10:     #aadbaa
 ! DarkYellow + Yellow
-st.color3:        #c2c372
-st.color11:       #dadbaa
+st.color3:      #c2c372
+st.color11:     #dadbaa
 ! DarkBlue + Blue
-st.color4:        #7372c3
-st.color12:       #aaaadb
+st.color4:      #7372c3
+st.color12:     #aaaadb
 ! DarkMagenta + Magenta
-st.color5:        #c372c2
-st.color13:       #dbaada
+st.color5:      #c372c2
+st.color13:     #dbaada
 ! DarkCyan + Cyan
-st.color6:        #72c2c3
-st.color14:       #aadadb
+st.color6:      #72c2c3
+st.color14:     #aadadb
 ! LightGrey + White
-st.color7:        #d9d9d9
-st.color15:       #ffffff
+st.color7:      #d9d9d9
+st.color15:     #ffffff

@@ -4,7 +4,7 @@ set -e
 
 # TODO:
 # wm-scripts, vifmrun, lf, screenshot (maim), clipboard (greenclip/xclip/xsel/etc)
-# libxft-bgra, neovim/vim (appimage), ripgrep, fzf, xwallpaper
+# libxft-bgra, neovim/vim (appimage), ripgrep, fzf, xwallpaper, mpd/ncmpcpp
 
 # Dependencies:
 # yum (centos 7): libXft-devel libXtst-devel gtk3-devel
@@ -28,7 +28,7 @@ set_prog_params() {
 
     # set branch
     case "$target" in
-        st)         branch="patched-unstable-config" ;;
+        st)         branch="patched-config" ;;
         dwm)        branch="config-bar" ;;
         xmouseless) branch="patched" ;;
         *)          branch="master" ;;
