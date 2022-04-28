@@ -12,28 +12,12 @@ PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magent
 [[ -n $key[Delete] ]] && bindkey -- $key[Delete] delete-char
 [[ -n $key[Up]     ]] && bindkey -- $key[Up]     up-line-or-history
 [[ -n $key[Down]   ]] && bindkey -- $key[Down]   down-line-or-history
-bindkey "^?" backward-delete-char # vi mode backspace fix
+bindkey '^?' backward-delete-char # vi mode backspace fix
 bindkey '^[[Z' reverse-menu-complete # shift-tab
 bindkey -M vicmd '^K' history-beginning-search-backward # backward search in vi command mode
 bindkey -M viins '^K' history-beginning-search-backward # backward search in vi insert mode
 bindkey -M vicmd '^J' history-beginning-search-forward # forward search in vi command mode
 bindkey -M viins '^J' history-beginning-search-forward # forward search in vi insert mode
-
-# fzf history search
-fzf_binds=(
-    "/usr/share/fzf/key-bindings.zsh"
-    "/usr/share/fzf/shell/key-bindings.zsh"
-    "/usr/share/doc/fzf/examples/key-bindings.zsh"
-)
-if [ -f "${fzf_binds[0]}" ]; then
-    source "${fzf_binds[0]}"
-elif [ -f "${fzf_binds[1]}" ]; then
-    source "${fzf_binds[1]}"
-elif [ -f "${fzf_binds[2]}" ]; then
-    source "${fzf_binds[3]}"
-fi
-bindkey -M viins '^R' fzf-history-widget
-bindkey -M vicmd '^R' fzf-history-widget
 
 # vi escape key delay
 export KEYTIMEOUT=1
@@ -96,26 +80,20 @@ precmd_functions+=(_set_beam_cursor) #
 # ensure insert mode and beam cursor when exiting vim
 zle-line-init() { zle -K viins; _set_beam_cursor }
 
-# aliases
-[ -f "$XDG_CONFIG_HOME/aliases.sh" ] && source "$XDG_CONFIG_HOME/aliases.sh"
-# extra settings (for temporary purposes)
-[ -f "$XDG_CONFIG_HOME/extra.sh" ] && source "$XDG_CONFIG_HOME/extra.sh"
-
 # autosuggestions
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 bindkey '^ ' autosuggest-accept
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-autosuggests=(
-    "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-)
-if [ -f "${autosuggests[0]}" ]; then
-    source "${autosuggests[0]}"
-elif [ -f "${autosuggests[1]}" ]; then
-    source "${autosuggests[1]}"
-fi
+autosuggest_sh="$HOME/.local/share/zsh-autosuggestions.zsh"
+[ -f "$autosuggest_sh" ] && source "$autosuggest_sh"
 
 # syntax highlight
-syntax_highlighting_script="/usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-[ -f "$syntax_highlighting_script" ] && source "$syntax_highlighting_script" 1>/dev/null
+syntax_highlight_sh='/usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh'
+[ -f "$syntax_highlight_sh" ] && source "$syntax_highlight_sh"
+
+# aliases
+[ -f "$XDG_CONFIG_HOME/shell/aliases.sh" ] && source "$XDG_CONFIG_HOME/shell/aliases.sh"
+# extra settings (for temporary purposes)
+[ -f "$XDG_CONFIG_HOME/shell/extra.sh" ] && source "$XDG_CONFIG_HOME/shell/extra.sh"
+# fzf
+[ -f "$XDG_CONFIG_HOME/fzf/fzf.zsh" ] && source "$XDG_CONFIG_HOME/fzf/fzf.zsh"

@@ -1,6 +1,6 @@
 " vim: fdm=marker fdl=0
 
-if isdirectory(".nvim")
+if isdirectory($IDE_DIR)
   " autocomplete
   " {{{ ycm
   Plug 'ycm-core/YouCompleteMe'
