@@ -558,18 +558,6 @@ endif
 " $ yarn install
 " $ yarn build
 "
-" # sshrc installation (no package manager)
-" $ curl -O https://raw.githubusercontent.com/cdown/sshrc/master/sshrc
-" $ chmod +x sshrc && sudo mv sshrc /usr/local/bin
-"
 " # pycscope installation (locally)
 " $ pip install git+https://github.com/portante/pycscope
-"
-" # ctags build/install (no package manager)
-" $ git clone https://github.com/universal-ctags/ctags.git
-" $ cd ctags
-" $ ./autogen.sh
-" $ ./configure --prefix=/where/you/want # defaults to /usr/local
-" $ make
-" $ make install # may require extra privileges depending on where to install
 " }}}

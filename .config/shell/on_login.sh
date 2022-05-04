@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # NOTE: $ python -c "import ssl; print(ssl.get_default_verify_paths())"
 # ubuntu CA bundle:

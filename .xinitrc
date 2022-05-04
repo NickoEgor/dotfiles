@@ -26,8 +26,9 @@ xset r rate 200 35              # keyboard speed
 # autostart
 [ -f "$XDG_CONFIG_HOME/shell/on_x11.sh" ] && source "$XDG_CONFIG_HOME/shell/on_x11.sh"
 
-# ensure that xrdb has finished running before starting the WM/DE
+# ensure that xrdb has finished running before starting x11
 [ -n "$xrdbpid" ] && wait "$xrdbpid"
 
-# start desktop manager
-[ -n "$XDM" ] && exec $XDM $XDM_ARGS
+# start x11
+# shellcheck disable=SC2086
+[ -n "$WM" ] && exec $WM $WM_ARGS

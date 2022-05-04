@@ -10,21 +10,15 @@ export READER='zathura'
 export IDE_DIR='.ide'
 
 # gui
-export XDM='gnome-session'
-export XDM_ARGS='--session gnome-classic'
-export WMBAR=
+export USE_XSESSION=0
+export WM='gnome-session'
+export WM_ARGS='--session gnome-classic'
+export WM_BAR=
 
 # XDG directories
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
-
-# history
-export HISTFILE="$XDG_DATA_HOME/shell.hist"
-export HISTSIZE=1000000
-export HISTFILESIZE=$HISTSIZE
-export HISTIGNORE=' *'
-export SAVEHIST=$HISTSIZE
 
 # colors
 export GREP_COLOR='1;31'
@@ -67,7 +61,7 @@ if [ -f "$XDG_CONFIG_HOME/shell/on_login.sh" ]; then
 fi
 
 # x11 start
-if [ "$(tty)" = '/dev/tty1' ] && [ -n "$WM" ]; then
+if [ ! "$USE_XSESSION" ] && [ "$(tty)" = '/dev/tty1' ] && [ -n "$WM" ]; then
     pgrep -x "$WM" || exec startx \
         1>"$XDG_CACHE_HOME/Xorg.1.log" \
         2>"$XDG_CACHE_HOME/Xorg.2.log"

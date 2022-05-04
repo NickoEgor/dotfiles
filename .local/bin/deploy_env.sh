@@ -2,19 +2,20 @@
 
 set -e
 
-# TODO:
-# wm-scripts, vifmrun, lf, screenshot (maim), clipboard (greenclip/xclip/xsel/etc)
-# libxft-bgra, neovim/vim (appimage), ripgrep, fzf, xwallpaper, mpd/ncmpcpp
-
-# Dependencies:
+# TODO: screenshot (maim), clipboard (greenclip/xclip/xsel/etc) libxft-bgra, ripgrep, mpd/ncmpcpp
+# NOTE: X11 dependencies
 # yum (centos 7): libXft-devel libXtst-devel gtk3-devel
+
+log2() {
+    echo "==> $1" 1>&2
+}
 
 check_args() {
     target="$1"
 
-    [ "$#" -lt 1 ] && echo "==> target is needed" && exit 1
+    [ "$#" -lt 1 ] && log2 "target is needed" && exit 1
     # shellcheck disable=SC2076
-    [[ ! " ${progs[*]} " =~ " $target " ]] && echo "==> prog is not allowed" && exit 1
+    [[ ! " ${progs[*]} " =~ " $target " ]] && log2 "program is not supported" && exit 1
 
     return 0
 }
@@ -24,8 +25,12 @@ set_prog_params() {
     case "$target" in
         htop-vim)   repo="https://github.com/KoffeinFlummi/htop-vim.git" ;;
         fzf)        repo="https://github.com/junegunn/fzf.git" ;;
+        ctags)      repo="https://github.com/universal-ctags/ctags.git" ;;
         zsh-as)     repo="https://github.com/zsh-users/zsh-autosuggestions.git" ;;
-        *)          repo="https://github.com/NickoEgor/$target" ;;
+        zsh-fsh)    repo="https://github.com/zdharma-continuum/fast-syntax-highlighting" ;;
+        xwallpaper) repo="https://github.com/stoeckmann/xwallpaper.git" ;;
+        acpilight)  repo="https://gitlab.com/wavexx/acpilight.git" ;;
+        *)          repo="https://github.com/NickoEgor/$target.git" ;;
     esac
 
     # set branch
@@ -39,7 +44,7 @@ set_prog_params() {
 
 set_upstream() {
     if git remote -v | grep -qm1 upstream ; then
-        echo "==> skip set_upstream()"
+        log2 "skip set_upstream()"
         return 0
     fi
 
@@ -50,7 +55,7 @@ set_upstream() {
         dragon)     upstream="https://github.com/mwh/dragon" ;;
         xmouseless) upstream="https://github.com/jbensmann/xmouseless" ;;
         sshrc)      upstream="https://github.com/cdown/sshrc" ;;
-        *) echo "==> skip set_upstream()" && return ;;
+        *)          log2 "skip set_upstream()" && return ;;
     esac
 
     git remote add upstream "$upstream"
@@ -62,7 +67,8 @@ clone_repo() {
 
     if [ -d "$target" ]; then
         cd "$target" || exit 1
-        echo "==> skip clone_repo()"
+        log2 "skip clone_repo()"
+        git pull
         return
     fi
 
@@ -89,34 +95,41 @@ setup_repo() {
 build_target() {
     case "$target" in
         st|dmenu|dwm|dwmbar|dragon|xmouseless) make ;;
-        htop-vim) ./autogen.sh && ./configure && make ;;
-        *) echo "==> skip build_target()" ;;
+        htop-vim|ctags|xwallpaper) ./autogen.sh && ./configure && make ;;
+        *) log2 "skip build_target()" ;;
     esac
 }
 
 install_target() {
     case "$target" in
-        st|dmenu|dwm|dwmbar|xmouseless|htop-vim|sshrc) sudo make install ;;
+        st|dmenu|dwm|dwmbar|xmouseless|htop-vim|sshrc|ctags|xwallpaper|acpilight) sudo make install ;;
         dragon) sudo make PREFIX="/usr/local" install ;;
         fzf) ./install --xdg --key-bindings --no-update-rc --completion ;;
         zsh-as)
-            [ ! -d "$HOME/.local/share" ] && mkdir -p "$HOME/.local/share"
-            cp ./zsh-autosuggestions.zsh "$HOME/.local/share/zsh-autosuggestions.zsh"
+            local zsh_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/zsh"
+            mkdir -pv "$zsh_data_dir"
+            cp ./zsh-autosuggestions.zsh "$zsh_data_dir/zsh-autosuggestions.zsh"
             ;;
-        *) echo "==> skip install_target()" ;;
+        zsh-fsh)
+            local zsh_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/zsh"
+            mkdir -p "$zsh_data_dir"
+            ln -s "$PWD" "$zsh_data_dir/fsh"
+            ;;
+        *) log2 "skip install_target()" ;;
     esac
 }
 
 cleanup() {
     case "$target" in
-        st|dmenu|dwm|dwmbar|dragon|xmouseless|htop-vim) make clean ;;
-        *) echo "==> skip cleanup()" ;;
+        st|dmenu|dwm|dwmbar|dragon|xmouseless|htop-vim|xwallpaper) make clean ;;
+        *) log2 "skip cleanup()" ;;
     esac
 }
 
 # ===================================== #
 
-progs=(st dmenu dwm dwmbar dotfiles df dragon xmouseless term-theme htop-vim sshrc fzf zsh-as)
+progs=(st dmenu dwm dwmbar dotfiles df dragon xmouseless term-theme
+       htop-vim sshrc fzf ctags zsh-as zsh-fsh xwallpaper acpilight)
 env_dir="$HOME/prog/env"
 
 git_name="NickoEgor"
