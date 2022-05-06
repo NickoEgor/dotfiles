@@ -129,9 +129,10 @@ let g:ale_cmake_cmakeformat_options = '--line-width=120'
 " completion
 set omnifunc=ale#completion#OmniFunc
 nm <localleader>l <Plug>(ale_lint)
-nm <localleader>t <Plug>(ale_toggle)
+nm <localleader>e <Plug>(ale_enable)
+nm <localleader>d <Plug>(ale_disable)
 nm <localleader>f <Plug>(ale_fix)
-nm <localleader>d <Plug>(ale_detail)
+nm <localleader>i <Plug>(ale_detail)
 nm <localleader>] <Plug>(ale_next)
 nm <localleader>[ <Plug>(ale_previous)
 nm <localleader>} <Plug>(ale_next_error)
@@ -169,8 +170,10 @@ Plug 'airblade/vim-gitgutter'
 " auto tag management
 Plug 'ludovicchabant/vim-gutentags'
 if isdirectory($IDE_DIR)
+  " TODO: fix to not start gutentags when file is opened outside of project
   let g:gutentags_ctags_executable = 'guten.sh'
   let g:gutentags_ctags_tagfile = $IDE_DIR . '/tags'
+  nn <localleader>t :GutentagsUpdate!<CR>
   " NOTE: to debug gutentags uncomment line below
   " let g:gutentags_trace = 1
 else
@@ -183,6 +186,12 @@ Plug 'plasticboy/vim-markdown'
 " aligning text
 " NOTE: http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
 Plug 'godlygeek/tabular'
+
+" highlight colors
+Plug 'ap/vim-css-color'
+
+" python
+Plug 'vim-scripts/indentpython.vim'
 
 " additional plugins
 if filereadable(expand('<sfile>:p:h') . '/extra.vim')
@@ -370,17 +379,14 @@ if executable('rg')
   set grepprg=rg-vim.sh
 
   func! QuickGrep(pattern, type)
-    if a:pattern == "''"
-      echo 'Empty search string given'
-      return 1
-    endif
+    let l:escapedpattern = escape(a:pattern, '%\""')
 
     if a:type == 'all'
-      exe 'silent grep! ' . a:pattern
+      exe 'silent grep! "' . l:escapedpattern . '"'
     elseif a:type == 'file'
-      exe 'silent grep! ' . a:pattern . ' ' . expand('%')
+      exe 'silent grep! "' . l:escapedpattern . '" ' . expand('%')
     elseif a:type == 'dir'
-      exe 'silent grep! ' . a:pattern . ' ' . expand('%:p:h')
+      exe 'silent grep! "' . l:escapedpattern . '" ' . expand('%:p:h')
     endif
 
     copen
@@ -394,17 +400,17 @@ if executable('rg')
   endfunc
 
   command! -nargs=1 QuickGrep call QuickGrep(<f-args>, 'all')
-  nn <leader>gg :QuickGrep<space>''<left>
-  vn <leader>gg y:QuickGrep '<C-r>+'<CR>
-  nn <leader>g/ :QuickGrep<space>'<C-r>0'<CR>
+  nn <leader>gg :QuickGrep<space>
+  vn <leader>gg y:QuickGrep <C-r>+<CR>
+  nn <leader>g/ :QuickGrep<space><C-r>0<CR>
 
   command! -nargs=1 QuickGrepFile call QuickGrep(<f-args>, 'file')
-  nn <leader>gf :QuickGrepFile<space>''<left>
-  vn <leader>gf y:QuickGrepFile '<C-r>+'<CR>
+  nn <leader>gf :QuickGrepFile<space>
+  vn <leader>gf y:QuickGrepFile <C-r>+<CR>
 
   command! -nargs=1 QuickGrepDir call QuickGrep(<f-args>, 'dir')
-  nn <leader>gd :QuickGrepDir<space>''<left>
-  vn <leader>gd y:QuickGrepDir '<C-r>+'<CR>
+  nn <leader>gd :QuickGrepDir<space>
+  vn <leader>gd y:QuickGrepDir <C-r>+<CR>
 endif
 " }}}
 
@@ -552,6 +558,8 @@ endif
 " > don't forget to use corresponding gcc version
 " $ cd .vim/plugged/YouCompleteMe/
 " $ python3 install.py --clang-completer
+" > or this (if previous option doesn't work)
+" $ python3 install.py --clangd-completer
 "
 " # coc.nvim compilation
 " $ cd ~/.local/share/nvim/plugged/coc.nvim/
