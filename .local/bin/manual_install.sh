@@ -2,9 +2,13 @@
 
 set -e
 
-# TODO: screenshot (maim), clipboard (greenclip/xclip/xsel/etc) libxft-bgra, ripgrep, mpd/ncmpcpp
-# NOTE: X11 dependencies
-# yum (centos 7): libXft-devel libXtst-devel gtk3-devel
+# --- todo ---
+# 1. clipboard (greenclip/xclip/xsel)
+# 2. ripgrep
+# 3. bat
+# --- dependencies ---
+# X11 apps: yum - libXft-devel libXtst-devel gtk3-devel
+# brillo: go-md2man
 
 log2() {
     echo "==> $1" 1>&2
@@ -13,14 +17,16 @@ log2() {
 check_args() {
     target="$1"
 
-    [ "$#" -lt 1 ] && log2 "target is needed" && exit 1
+    [ "$#" -lt 1 ] && log2 "fail: target is needed" && exit 1
     # shellcheck disable=SC2076
-    [[ ! " ${progs[*]} " =~ " $target " ]] && log2 "program is not supported" && exit 1
+    [[ ! " ${progs[*]} " =~ " $target " ]] && log2 "fail: program is not supported" && exit 1
 
     return 0
 }
 
-set_prog_params() {
+set_program_params() {
+    log2 "set_program_params()"
+
     # set repo
     case "$target" in
         htop-vim)   repo="https://github.com/KoffeinFlummi/htop-vim.git" ;;
@@ -30,6 +36,8 @@ set_prog_params() {
         zsh-fsh)    repo="https://github.com/zdharma-continuum/fast-syntax-highlighting" ;;
         xwallpaper) repo="https://github.com/stoeckmann/xwallpaper.git" ;;
         acpilight)  repo="https://gitlab.com/wavexx/acpilight.git" ;;
+        libxft-bgra)repo="https://gitlab.freedesktop.org/xorg/lib/libxft.git" ;;
+        brillo)     repo="https://gitlab.com/cameronnemo/brillo.git" ;;
         *)          repo="https://github.com/NickoEgor/$target.git" ;;
     esac
 
@@ -43,6 +51,8 @@ set_prog_params() {
 }
 
 set_upstream() {
+    log2 "set_upstream()"
+
     if git remote -v | grep -qm1 upstream ; then
         log2 "skip set_upstream()"
         return 0
@@ -62,11 +72,13 @@ set_upstream() {
 }
 
 clone_repo() {
+    log2 "clone_repo()"
+
     [ ! -d "$env_dir" ] && mkdir -p "$env_dir"
-    cd "$env_dir" || exit 1
+    cd "$env_dir" || { log2 "fail: cd $env_dir" ; exit 1 ;}
 
     if [ -d "$target" ]; then
-        cd "$target" || exit 1
+        cd "$target" || { log2 "fail: cd $target" ; exit 1 ;}
         log2 "skip clone_repo()"
         git pull
         return
@@ -83,6 +95,8 @@ clone_repo() {
 
 setup_repo() {
     if [[ "$repo" == *"NickoEgor"* ]]; then
+        log2 "setup_repo()"
+
         git remote set-url origin "git@github.com:NickoEgor/$target.git"
 
         git config user.name "$git_name"
@@ -92,17 +106,29 @@ setup_repo() {
     fi
 }
 
-build_target() {
+build() {
+    log2 "build()"
+
     case "$target" in
-        st|dmenu|dwm|dwmbar|dragon|xmouseless) make ;;
+        st|dmenu|dwm|dwmbar|dragon|xmouseless|brillo) make ;;
         htop-vim|ctags|xwallpaper) ./autogen.sh && ./configure && make ;;
-        *) log2 "skip build_target()" ;;
+        libxft-bgra)
+            curl -O "https://gitlab.freedesktop.org/xorg/lib/libxft/-/merge_requests/1.patch"
+            patch -p1 < "1.patch"
+            ./autogen.sh --prefix="/usr/local" --sysconfdir="/etc" --disable-static
+            make
+            ;;
+        *) log2 "skip build()" ;;
     esac
 }
 
-install_target() {
+install() {
+    log2 "install()"
+
     case "$target" in
-        st|dmenu|dwm|dwmbar|xmouseless|htop-vim|sshrc|ctags|xwallpaper|acpilight) sudo make install ;;
+        st|dmenu|dwm|dwmbar|xmouseless|htop-vim|sshrc|ctags|xwallpaper|acpilight|brillo)
+            sudo make install
+            ;;
         dragon) sudo make PREFIX="/usr/local" install ;;
         fzf) ./install --xdg --key-bindings --no-update-rc --completion ;;
         zsh-as)
@@ -115,21 +141,31 @@ install_target() {
             mkdir -p "$zsh_data_dir"
             ln -s "$PWD" "$zsh_data_dir/fsh"
             ;;
-        *) log2 "skip install_target()" ;;
+        libxft-bgra)
+            make DESTDIR="${PWD}/build" install
+            ;;
+        *) log2 "skip install()" ;;
     esac
 }
 
 cleanup() {
+    log2 "cleanup()"
+
     case "$target" in
         st|dmenu|dwm|dwmbar|dragon|xmouseless|htop-vim|xwallpaper) make clean ;;
+        libxft-bgra)
+            rm -f "1.patch" ./**/*.rej ./**/*.orig
+            git checkout .
+            make clean
+            ;;
         *) log2 "skip cleanup()" ;;
     esac
 }
 
 # ===================================== #
 
-progs=(st dmenu dwm dwmbar dotfiles df dragon xmouseless term-theme
-       htop-vim sshrc fzf ctags zsh-as zsh-fsh xwallpaper acpilight)
+progs=(st dmenu dwm dwmbar dotfiles df dragon xmouseless term-theme brillo
+       htop-vim sshrc fzf ctags zsh-as zsh-fsh xwallpaper acpilight libxft-bgra)
 env_dir="$HOME/prog/env"
 
 git_name="NickoEgor"
@@ -142,9 +178,9 @@ branch=
 # ===================================== #
 
 check_args "$@"
-set_prog_params
+set_program_params
 clone_repo
 setup_repo
-build_target
-install_target
+build
+install
 cleanup

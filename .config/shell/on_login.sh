@@ -5,6 +5,7 @@
 # export REQUESTS_CA_BUNDLE="/usr/lib/ssl/certs/ca-certificates.crt"
 # centos CA bundle:
 export REQUESTS_CA_BUNDLE="/etc/pki/tls/cert.pem"
+# NOTE: CURL_CA_BUNDLE variable can be used for similar CA troubles for curl
 
 # gnome panels style
 export GNOME_SHELL_SESSION_MODE=classic # gnome-session --session gnome-classic
