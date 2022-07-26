@@ -18,7 +18,7 @@ endfunction
 " {{{ PLUGINS
 call plug#begin()
 
-" treeview
+" {{{ treeview
 if has('nvim')
   Plug 'antoinemadec/FixCursorHold.nvim'
 endif
@@ -26,7 +26,7 @@ Plug 'lambdalisue/fern.vim'
 Plug 'lambdalisue/fern-hijack.vim'
 nn <silent> <C-n> :Fern . -reveal=%<CR>
 nn <silent> <leader>n :Fern %:p:h -reveal=%<CR>
-nn <silent> <leader>T :Fern . -reveal=% -drawer -toggle<CR>
+nn <silent> <leader>N :Fern . -reveal=% -drawer -toggle<CR>
 let g:fern#default_hidden = 1
 let g:fern#disable_default_mappings = 1
 let g:fern#disable_viewer_hide_cursor = 1
@@ -51,6 +51,7 @@ augroup FernGroup
   autocmd!
   autocmd FileType fern call FernInit()
 augroup END
+" }}}
 
 " comments
 Plug 'tpope/vim-commentary'
@@ -74,7 +75,7 @@ let g:lightline = {
   \  'inactive': {'left': [['relativepath', 'modified']]}
   \}
 
-" snippets
+" {{{ snippets
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'honza/vim-snippets'
@@ -85,8 +86,9 @@ smap <C-k> <Plug>(neosnippet_expand_or_jump)
 xm <C-k> <Plug>(neosnippet_expand_target)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
   \  '\<Plug>(neosnippet_expand_or_jump)' : '\<TAB>'
+" }}}
 
-" linting
+" {{{ linting
 Plug 'w0rp/ale'
 " NOTE: do not use 'clangd' linter as it's too heavy
 let g:ale_linters = {
@@ -143,6 +145,7 @@ nm <localleader>] <Plug>(ale_next)
 nm <localleader>[ <Plug>(ale_previous)
 nm <localleader>} <Plug>(ale_next_error)
 nm <localleader>{ <Plug>(ale_previous_error)
+" }}}
 
 " go
 Plug 'fatih/vim-go'
@@ -211,7 +214,7 @@ filetype plugin indent on
 
 " {{{ COLORTHEME
 " if has('nvim')
-"   set termguicolors
+  " set termguicolors
 " endif
 " colo shades_of_purple
 " let g:lightline = { 'colorscheme': 'shades_of_purple' }
@@ -219,7 +222,7 @@ filetype plugin indent on
 colo space-vim-dark
 " ---
 " set t_Co=256
-" set background=dark
+set background=dark
 " colo PaperColor
 " ---
 hi Comment cterm=italic
@@ -339,11 +342,6 @@ nn zq ZQ
 
 " buffer close
 nn <silent> <C-q> :close<CR>
-
-" newline without insert mode
-nn <localleader>o o<ESC>
-nn <localleader>O O<ESC>
-
 " }}}
 
 " {{{ CURSOR
@@ -517,6 +515,7 @@ au VimLeave *.tex !texclear %:p:h
 
 " autoremove trailing whitespaces
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
+vn <silent> <leader>w y:'<,'>s/\s\+$//e <bar> nohl<CR>
 
 " update ctags manually
 nn <silent> <leader>t :!updtags.sh $IDE_DIR/tags .<CR>
@@ -563,6 +562,9 @@ endif
 "
 " # modeline example
 " # vim:ft=vim:ts=4:sw=4:sts=4:fdm=marker:fdl=0:cms=#\ %s
+"
+" # filename searching with spaces (32 is space symbol)
+" set isfname=@,48-57,/,.,-,_,+,,,#,$,%,~,=,32
 "
 " # open nvim without config
 " $ nvim --clean                      # since v8
