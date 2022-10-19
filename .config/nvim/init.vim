@@ -298,7 +298,7 @@ set cinoptions=N-s,g0
 " enable <> pair
 set matchpairs+=<:>
 " do not save quickfix to session file
-set sessionoptions-=blank
+set sessionoptions-=blank,folds
 " ignore local .vimrc
 set noexrc
 " shorten vim messages
@@ -380,7 +380,15 @@ nn gr :call ToggleResizeSplitMode()<CR>
 
 " {{{ GREP
 if executable('rg')
-  set grepprg=rg-vim.sh
+  function! ResetGrep()
+    if exists("g:grepignore")
+      exe "set grepprg=rg-vim.sh\\ -d\\ ".join(g:grepignore, ',')
+    else
+      set grepprg=rg-vim.sh
+    endif
+  endfunction
+
+  call ResetGrep()
 
   function! RG(pattern, where, type)
     let l:escapedpattern = escape(a:pattern, '%\""')
