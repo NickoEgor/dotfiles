@@ -10,19 +10,13 @@ export READER='zathura'
 export OPENER='xdg-open'
 export PAGER='less'
 
-# gui
-export USE_XSESSION='true'
-export WM='gnome-session'
-export WM_ARGS='--session gnome-classic'
-export WM_BAR=
-
 # XDG directories
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 
 # colors
-export GREP_COLOR='1;31'
+export GREP_COLORS='mt=1;31'
 export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
 export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
 export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
@@ -59,7 +53,13 @@ export PATH="$PATH:$(find ~/.local/bin -type d -printf %p:):$GOPATH/bin"
 # hidden directory for project files
 export IDE_DIR='.ide'
 
-# login
+# GUI
+export USE_XSESSION='true'
+export WM='gnome-session'
+export WM_ARGS='--session gnome-classic'
+export WM_BAR=
+
+# machine-specific script
 [ -f "$XDG_CONFIG_HOME/shell/on_login.sh" ] && source "$XDG_CONFIG_HOME/shell/on_login.sh"
 
 # x11 start

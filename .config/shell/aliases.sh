@@ -14,7 +14,7 @@ alias \
 # system progs
 alias \
     v='${EDITOR}' \
-    sv='sudo ${EDITOR}' \
+    sv='sudoedit' \
     sc='systemctl' \
     scu='systemctl --user' \
     ssc='sudo systemctl' \
@@ -70,12 +70,13 @@ alias \
     vz='${EDITOR} ${XDG_CONFIG_HOME}/zsh/.zshrc' \
     vq='${EDITOR} ${XDG_CONFIG_HOME}/qutebrowser/config.py' \
     vp='${EDITOR} ${XDG_CONFIG_HOME}/shell/profile' \
+    ve='${EDITOR} ${XDG_CONFIG_HOME}/shell/extra.sh' \
     vr='${EDITOR} ${XDG_CONFIG_HOME}/xresources' \
     vb='${EDITOR} ~/.bashrc' \
     vx='${EDITOR} ~/.xinitrc' \
     vh='${EDITOR} ${HISTFILE}' \
     vg='${EDITOR} .gitignore' \
-    vt='${EDITOR} TODO.md' \
+    vt='${EDITOR} $(xdg-user-dir DOCUMENTS)/TODO.md' \
     vw='${EDITOR} ~/prog/env/dwm/config.h' \
     v_='${EDITOR} $_'
 
@@ -91,7 +92,7 @@ alias \
     cdd='cd "$(xdg-user-dir DOWNLOAD)"' \
     cdm='cd "$(xdg-user-dir MUSIC)"' \
     cdp='cd "$(xdg-user-dir PICTURES)"' \
-    cdS='cd "$(xdg-user-dir SERIALS)"' \
+    cdS='cd "$(xdg-user-dir SERIES)"' \
     cdv='cd "$(xdg-user-dir VIDEOS)"'
 alias \
     cdP='cd /mnt/phone' \
@@ -122,7 +123,7 @@ snc() {
 
 lfcd () {
     tmp="$(mktemp -uq)"
-    trap 'rm -f $tmp >/dev/null 2>&1' HUP INT QUIT TERM PWR EXIT
+    trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
     lf -last-dir-path="$tmp" "$@"
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"
