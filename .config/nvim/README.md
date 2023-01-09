@@ -1,4 +1,4 @@
-# Vim notes
+# Vim/Neovim notes
 
 ## troubleshoot
 + After setting leader/localleader all mappings for them got removed
@@ -68,7 +68,7 @@ sudo ln -s ~/.local/share/nvim/plugged /root/.vim/plugged
 ## YCM installation
 ```bash
 # don't forget to use corresponding gcc version
-cd .vim/plugged/YouCompleteMe/
+cd ~/.vim/plugged/YouCompleteMe/
 python3 install.py --clang-completer
 
 # or this (in case previous option doesn't work)
