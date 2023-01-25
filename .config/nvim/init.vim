@@ -199,10 +199,10 @@ nn <silent> tL :tabmove +1<CR>
 " }}}
 
 " {{{ SESSION
-let g:session_file = "session.vim"
-nn <silent> <leader>s :mksession! g:session_file <bar> echo 'Session saved to '.g:session_file<CR>
+let g:session_file = 'session.vim'
+nn <silent> <leader>s :execute 'mksession! '.g:session_file <bar> echo 'Session saved to '.g:session_file<CR>
 nn <silent> <leader>l :execute 'source '.g:session_file<CR>
-nn <silent> <leader>r :execute '!rm '.g:session_file.'<CR><CR>:echo "Session removed"<CR>'
+nn <silent> <leader>r :execute '!rm '.g:session_file<CR><CR>:echo 'Session removed'<CR>
 " }}}
 
 " {{{ SPELL
@@ -220,7 +220,7 @@ au FileType vim setlocal fdm=marker fdl=0
 " }}}
 
 " {{{ FORMATTERS
-nn <C-f> :echo "No specific formatter set"<CR>gg=G
+nn <C-f> :echo 'No specific formatter set'<CR>gg=G
 " clang-format | c/c++, js/ts, proto
 if executable('clang-format')
   au FileType c,cpp,javascript,typescript,proto nn <buffer> <C-f> :!clang-format -i %<CR><CR>:e<CR>
@@ -287,7 +287,7 @@ au FileType c,cpp setlocal keywordprg=cppman
 nn gb :execute '!git blame -L ' . max([eval(line('.')-5), 1]) . ',+10 %'<CR>
 
 " remove swaps
-nn <leader>D :!rm ~/.local/share/nvim/swap/*<CR>
+nn <leader>R :!rm -f ~/.local/share/nvim/swap/*<CR>
 
 " prevent 'file changed' warnings
 autocmd FileChangedShell * :

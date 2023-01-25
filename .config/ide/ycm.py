@@ -1,35 +1,28 @@
 import os
 import ycm_core
 
-flags = [
+default_flags = [
+    # predefined
     '-Wall',
     '-Wextra',
     '-fexceptions',
     '-std=c++11',
     '-x',
     'c++',
-    '-isystem',
-    '/usr/include',
-    '-isystem',
-    '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-    '-isystem',
-    '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include',
-    '-isystem',
-    '/usr/local/include',
-    '-isystem',
-    '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1',
+    '-isystem', '/usr/include',
+    '-isystem', '/usr/local/include',
 ]
 
 compilation_database_folder = os.getcwd() + '/build/'
 
 
-def GetDatabase():
-    if compilation_database_folder:
+def get_database():
+    if os.path.isdir(compilation_database_folder):
         return ycm_core.CompilationDatabase(compilation_database_folder)
     return None
 
 
-def MakeRelativePathsInFlagsAbsolute(flags, working_directory):
+def make_relative_paths_in_flags_absolute(flags, working_directory):
     if not working_directory:
         return list(flags)
     new_flags = []
@@ -58,18 +51,33 @@ def MakeRelativePathsInFlagsAbsolute(flags, working_directory):
     return new_flags
 
 
+# pylint: disable=C0103
 def FlagsForFile(filename):
-    database = GetDatabase()
+    """This is the old entry point for YCM. Its interface is fixed.
+    Args:
+      filename: (String) Path to source file being edited.
+    Returns:
+      (Dictionary)
+        'flags': (List of Strings) Command line flags.
+        'do_cache': (Boolean) True if the result should be cached.
+    """
+    return Settings(filename=filename)
+
+
+# pylint: disable=C0103
+def Settings(**kwargs):
+    filename = kwargs['filename']
+    database = get_database()
     if database:
         # Bear in mind that compilation_info.compiler_flags_ does NOT return a
         # python list, but a "list-like" StringVec object
         compilation_info = database.GetCompilationInfoForFile(filename)
-        final_flags = MakeRelativePathsInFlagsAbsolute(
+        final_flags = make_relative_paths_in_flags_absolute(
                 compilation_info.compiler_flags_,
                 compilation_info.compiler_working_dir_)
     else:
         relative_to = os.path.dirname(os.path.abspath(filename))
-        final_flags = MakeRelativePathsInFlagsAbsolute(flags, relative_to)
+        final_flags = make_relative_paths_in_flags_absolute(default_flags, relative_to)
 
     return {
         'flags': final_flags,

@@ -1,12 +1,16 @@
 #!/bin/sh
 
 # NOTE: $ python -c "import ssl; print(ssl.get_default_verify_paths())"
-# ubuntu CA bundle:
-# export REQUESTS_CA_BUNDLE="/usr/lib/ssl/certs/ca-certificates.crt"
-# centos CA bundle:
-export REQUESTS_CA_BUNDLE="/etc/pki/tls/cert.pem"
+if [ -d "/usr/lib/ssl/certs/" ]; then
+    # ubuntu CA bundle:
+    export REQUESTS_CA_BUNDLE="/usr/lib/ssl/certs/ca-certificates.crt"
+elif [ -d "/etc/pki/tls/" ]; then
+    # centos CA bundle:
+    export REQUESTS_CA_BUNDLE="/etc/pki/tls/cert.pem"
+fi
+
 # NOTE: CURL_CA_BUNDLE variable can be used for similar CA troubles for curl
 # $ echo "cacert=/etc/ssl/certs/ca-certificates.crt" >> ~/.curlrc
 
-# gnome panels style
-export GNOME_SHELL_SESSION_MODE=classic # gnome-session --session gnome-classic
+export SUDO_ASKPASS="/home/yahor/.local/bin/wm/dmenu_pass"
+/usr/bin/vmware-user-suid-wrapper &

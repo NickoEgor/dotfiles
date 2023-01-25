@@ -2,16 +2,16 @@
 
 if project#isDirSet()
   " autocomplete
-  let completeplug='no' " coc/ycm/etc...
-  if (completeplug=='ycm')
+  let g:complete_plugin = 'ycm'  " coc/ycm/lsp
+  if (g:complete_plugin=='ycm')
     " {{{ ycm
     Plug 'ycm-core/YouCompleteMe'
     nn <localleader>y :YcmRestartServer<CR>
-    let g:ycm_global_ycm_extra_conf = getcwd() . "/.nvim/ycm.py"
+    let g:ycm_global_ycm_extra_conf = getcwd().'/'.$IDE_DIR.'/ycm.py'
     let g:ycm_confirm_extra_conf = 0
     nn <silent> <leader>k :YcmCompleter GetDoc<CR>
     " }}}
-  elseif (completeplug=='coc')
+  elseif (g:complete_plugin=='coc')
     " {{{ coc.nvim
     Plug 'Shougo/neoinclude.vim'
     Plug 'jsfaint/coc-neoinclude'
@@ -22,12 +22,12 @@ if project#isDirSet()
       return !col || getline('.')[col - 1]  =~ '\s'
     endfunction
     ino <silent><expr> <TAB>
-      \  pumvisible() ? "\<C-n>" :
-      \  <SID>check_back_space() ? "\<TAB>" :
+      \  pumvisible() ? '\<C-n>' :
+      \  <SID>check_back_space() ? '\<TAB>' :
       \  coc#refresh()
-    ino <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-    ino <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-    ino <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+    ino <expr> <Tab> pumvisible() ? '\<C-n>' : '\<Tab>'
+    ino <expr> <S-Tab> pumvisible() ? '\<C-p>' : '\<S-Tab>'
+    ino <expr> <cr> pumvisible() ? '\<C-y>' : '\<C-g>u\<CR>'
     " remap keys for gotos
     nm <silent> gd <Plug>(coc-definition)
     nm <silent> gy <Plug>(coc-type-definition)
@@ -37,6 +37,10 @@ if project#isDirSet()
     " symbol renaming
     nm <leader>R <Plug>(coc-rename)
     " }}}
+  elseif (g:complete_plugin=='lsp')
+    Plug 'williamboman/mason.nvim'
+    Plug 'williamboman/mason-lspconfig.nvim'
+    Plug 'neovim/nvim-lspconfig'
   endif
 endif
 
