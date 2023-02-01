@@ -13,4 +13,4 @@ fi
 # $ echo "cacert=/etc/ssl/certs/ca-certificates.crt" >> ~/.curlrc
 
 export SUDO_ASKPASS="/home/yahor/.local/bin/wm/dmenu_pass"
-/usr/bin/vmware-user-suid-wrapper &
+/usr/bin/vmware-user-suid-wrapper &>/dev/null &

@@ -44,22 +44,6 @@ if project#isDirSet()
   endif
 endif
 
-" {{{ DEBUG
-Plug 'puremourning/vimspector'
-let g:vimspector_install_gadgets = ['debugpy', 'vscode-cpptools']
-
-nn <leader>d :call vimspector#Launch()<CR>
-nn <leader>q :call vimspector#Reset()<CR>
-nn <localleader>r :call vimspector#Restart()<CR>
-nn <localleader>b <Plug>VimspectorToggleBreakpoint
-nn <localleader>B <Plug>VimspectorBreakpoints
-nn <localleader>s <Plug>VimspectorStop
-nn <localleader>l <Plug>VimspectorStepInto
-nn <localleader>h <Plug>VimspectorStepOut
-nn <localleader>j <Plug>VimspectorStepOver
-nn <localleader>k <Plug>VimspectorContinue
-" }}}
-
 " tree-sitter syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 

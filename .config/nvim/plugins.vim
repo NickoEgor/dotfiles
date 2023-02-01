@@ -1,7 +1,6 @@
 " plugins.vim
 " contains plugins and colortheme setting
 
-" {{{ PLUGINS
 call plug#begin()
 
 if has('nvim')
@@ -37,9 +36,11 @@ if has('nvim')
     autocmd FileType fern call FernInit()
   augroup END
 
-  Plug 'lambdalisue/fern-git-status.vim'
-  let g:fern_git_status#disable_ignored = 1
-  let g:fern_git_status#disable_submodules = 1
+  if g:has_project_config && isdirectory(".git")
+    Plug 'lambdalisue/fern-git-status.vim'
+    let g:fern_git_status#disable_ignored = 1
+    let g:fern_git_status#disable_submodules = 1
+  endif
 " }}}
 
 " {{{ ale linter/fixer
@@ -107,6 +108,7 @@ if has('nvim')
 
 " {{{ git
   Plug 'rhysd/conflict-marker.vim'
+  " ]x and [x to jump; ct/co/cb - take theirs/ours/both changes
   Plug 'airblade/vim-gitgutter'
   nn <leader>gt :GitGutterToggle<CR>
   nn <leader>p <Plug>(GitGutterPreviewHunk)
@@ -115,6 +117,22 @@ if has('nvim')
   if executable('rg')
     let g:gitgutter_grep = 'rg'
   endif
+" }}}
+
+" {{{ debug
+Plug 'puremourning/vimspector'
+let g:vimspector_install_gadgets = ['debugpy', 'vscode-cpptools']
+
+nn <leader>d :call vimspector#Launch()<CR>
+nn <leader>q :call vimspector#Reset()<CR>
+nn <localleader>r :call vimspector#Restart()<CR>
+nn <localleader>b <Plug>VimspectorToggleBreakpoint
+nn <localleader>B <Plug>VimspectorBreakpoints
+nn <localleader>s <Plug>VimspectorStop
+nn <localleader>l <Plug>VimspectorStepInto
+nn <localleader>h <Plug>VimspectorStepOut
+nn <localleader>j <Plug>VimspectorStepOver
+nn <localleader>k <Plug>VimspectorContinue
 " }}}
 endif
 
@@ -184,6 +202,7 @@ Plug 'mtdl9/vim-log-highlighting'
 Plug 'liuchengxu/space-vim-dark'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'savq/melange'
+Plug 'EdenEast/nightfox.nvim'
 
 " extra plugins
 call TryReadScriptFile('extra_plugins.vim')
@@ -196,20 +215,3 @@ endif
 call plug#end()
 
 filetype plugin indent on
-" }}}
-
-" {{{ COLORTHEME
-if has('nvim')
-  set termguicolors
-endif
-" ---
-" colo space-vim-dark
-" ---
-" set t_Co=256
-" set background=dark
-" colo PaperColor
-" ---
-colorscheme melange
-" ---
-hi Comment cterm=italic
-" }}}

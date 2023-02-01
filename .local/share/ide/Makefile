@@ -8,6 +8,7 @@ ifeq ($(IDE_DIR), )
 	IDE_DIR:=.ide
 endif
 IDE_DIR_PATH:=$(CURDIR)/$(IDE_DIR)
+IDE_MAKE=make -f $(IDE_DIR)/Makefile
 
 EDITOR:=${EDITOR}
 ifeq ($(EDITOR), )
@@ -67,7 +68,10 @@ backup:
 	rm backup.zip
 
 notes:
-	# empty
+	# to print some notes for project
+
+update:
+	# to update some ide files for project
 
 ################
 

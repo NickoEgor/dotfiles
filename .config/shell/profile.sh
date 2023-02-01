@@ -56,6 +56,11 @@ export IDE_DIR='.ide'
 # machine-specific script
 [ -f "$XDG_CONFIG_HOME/shell/on_login.sh" ] && source "$XDG_CONFIG_HOME/shell/on_login.sh"
 
+# ssh/tmux login
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ -n "$TMUX" ]; then
+    source "$HOME/.bashrc"
+fi
+
 # X11 GUI
 if [ -f "$XDG_CONFIG_HOME/shell/xprofile.sh" ]; then
     # profiles stored in $XDG_CONFIG_HOME/shell/xprofiles

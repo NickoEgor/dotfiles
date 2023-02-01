@@ -37,6 +37,7 @@ au FileType netrw nn <silent><buffer> r <Plug>NetrwRefresh
 " }}}
 
 call TryReadScriptFile('plugins.vim')
+call TryReadScriptFile('colorscheme.vim')
 
 " {{{ OPTIONS
 " status line
@@ -196,6 +197,11 @@ nn <silent> tn :tabnew %<CR>
 nn <silent> tc :tabclose<CR>
 nn <silent> tH :tabmove -1<CR>
 nn <silent> tL :tabmove +1<CR>
+
+if has('nvim')
+  nn <silent> <S-Tab> :tabprev<CR>
+  nn <silent> <Tab> :tabnext<CR>
+endif
 " }}}
 
 " {{{ SESSION
@@ -215,8 +221,9 @@ nn <silent> <leader>Sd :setlocal nospell spelllang=<CR>
 " tab style (2 spaces)
 au FileType vim,cmake,javascript,typescript,yaml,proto
   \  setlocal tabstop=2 | setlocal shiftwidth=2 | setlocal softtabstop=2
-au FileType markdown setlocal textwidth=0
-au FileType vim setlocal fdm=marker fdl=0
+au FileType markdown,text setlocal textwidth=0
+au FileType vim setlocal foldmethod=marker foldlevel=0
+au FileType gitconfig,make setlocal noexpandtab
 " }}}
 
 " {{{ FORMATTERS
@@ -259,13 +266,11 @@ au FileType xdefaults setlocal commentstring=!\ %s
 au FileType desktop,sxhkdrc,bib setlocal commentstring=#\ %s
 au FileType c,cpp setlocal commentstring=//\ %s
 
-" showing results
-au FileType tex,markdown nn <leader>o :!openout %<CR><CR>
-
 " tex
 let g:tex_flavor = 'latex' " set filetype for tex
 au FileType tex nn <leader>c :!texclear %:p:h<CR><CR>
 au VimLeave *.tex !texclear %:p:h
+au FileType tex,markdown nn <leader>o :!xdg-open %:p:r.pdf<CR><CR>
 
 " remove trailing whitespaces
 nn <silent> <leader>w :%s/\s\+$//e <bar> nohl<CR>
@@ -281,7 +286,9 @@ vn // y/\V<C-R>=escape(@",'/\')<CR><CR>
 vn <leader>s y:%s/<C-R>+//g<Left><Left>
 
 " use K for c++ man pages
-au FileType c,cpp setlocal keywordprg=cppman
+if executable('cppman')
+  au FileType c,cpp setlocal keywordprg=cppman
+endif
 
 " git blame
 nn gb :execute '!git blame -L ' . max([eval(line('.')-5), 1]) . ',+10 %'<CR>

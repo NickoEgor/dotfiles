@@ -1,0 +1,68 @@
+# NOTE: keys below reserved
+# 1. q/shift+q - kill window/wm
+# 2. shift+r - to update wm
+# 3. f - fullscreen
+# 4. shift+[h/j/k/l] - wm windows manipulations
+# 5. shift+[comma/period/slash] — other wm manipulations
+
+# system/audio controls
+super + {_,shift +}grave
+    $TERMINAL -e {htop,pulsemixer}
+
+# terminal
+super + {_,shift +} e
+    $TERMINAL {_,-c dropdown}
+
+# hotkey daemon restart
+super + r
+    pkill -USR1 -x sxhkd
+
+# reload bar
+super + shift + i
+    case "$WMBAR" in \
+        "dwmbar")   pkill -USR1 dwmbar ;; \
+        "polybar")  pkill polybar ; setsid polybar -r notebar & ;; \
+    esac
+
+# english translator
+super + {_,shift +} o
+    translate.py -{s,d}n
+
+# power management
+super + {_, shift +} p
+    powermanager {suspend,_}
+
+# program run
+super + d
+    dmenu_run
+
+# program kill
+super + shift + d
+    fastkill
+
+# attach floating window
+super + {_, shift +} g
+    cornerwindow {_,-H left}
+
+# terminal
+super + Return
+    sd
+
+# resize floating window with ratio
+super + {_, shift +} z
+    resizeratio {-,+} 5
+
+# mouse
+super + shift + x
+    xmouseless &>/dev/null
+
+# file managers
+super + {_, shift +} v
+    {_,FM=vifm} $TERMINAL -e fmrun.sh
+
+# clipboard
+super + shift + c
+    showcliphistory
+
+alt + Return
+    $TERMINAL
