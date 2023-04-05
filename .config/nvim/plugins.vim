@@ -167,9 +167,18 @@ Plug 'vim-scripts/Rename2'
 
 " status line
 Plug 'itchyny/lightline.vim'
+Plug 'itchyny/vim-gitbranch'
 let g:lightline = {
-  \  'active': {'left': [['mode', 'paste'], ['readonly', 'relativepath', 'modified']]},
-  \  'inactive': {'left': [['relativepath', 'modified']]}
+  \  'active': {
+  \    'left': [['mode', 'paste'], ['readonly', 'relativepath', 'modified'], ['gitbranch']],
+  \    'right': [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype', 'charvaluehex']]
+  \  },
+  \  'inactive': {
+  \    'left': [['relativepath', 'modified']],
+  \    'right': [['lineinfo'], ['percent'], ['filetype']]
+  \  },
+  \  'component': {'charvaluehex': '0x%B'},
+  \  'component_function': {'gitbranch': 'gitbranch#name'}
   \}
 
 " fzf
@@ -215,8 +224,9 @@ Plug 'mtdl9/vim-log-highlighting'
 " theme
 Plug 'liuchengxu/space-vim-dark'
 Plug 'NLKNguyen/papercolor-theme'
-Plug 'savq/melange'
+Plug 'savq/melange-nvim'
 Plug 'EdenEast/nightfox.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
 
 " extra plugins
 call TryReadScriptFile('extra_plugins.vim')

@@ -154,6 +154,9 @@ nn zq ZQ
 " buffer close
 nn <silent> <C-q> :close<CR>
 
+" update file and search
+nn <silent> <A-n> :e<CR>n
+nn <silent> <A-N> :e<CR>N
 " }}}
 
 " {{{ CURSOR
@@ -291,7 +294,7 @@ if executable('cppman')
 endif
 
 " git blame
-nn gb :execute '!git blame -L ' . max([eval(line('.')-5), 1]) . ',+10 %'<CR>
+nn gb :execute '!git blame -L '.max([eval(line('.')), 1]).',+'.min([eval(line('$')-line('.')+1),10]).' %'<CR>
 
 " remove swaps
 nn <leader>R :!rm -f ~/.local/share/nvim/swap/*<CR>

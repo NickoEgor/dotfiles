@@ -3,8 +3,8 @@
 Xcursor.size:   9
 dmenu.selbackground: #004466
 st.alpha:       0.85
-st.font:        monospace:pixelsize=18:antialias=true:autohint=true
-xterm*faceName: monospace:pixelsize=18:antialias=true:autohint=true
+st.font:        monospace:pixelsize=16:antialias=true:autohint=true
+xterm*faceName: monospace:pixelsize=16:antialias=true:autohint=true
 
 ! Chalkboard
 xterm*background:  #29262f

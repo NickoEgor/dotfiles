@@ -18,7 +18,10 @@ endif
 " colo terafox
 " colo carbonfox
 " ---
-colo melange
+" colo melange
+" ---
+set background=light
+colo gruvbox
 
 " comments
 hi Comment cterm=italic
