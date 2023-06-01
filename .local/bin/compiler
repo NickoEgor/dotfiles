@@ -59,7 +59,7 @@ if [ -z "$mode" ]; then
     esac
 elif [ "$mode" == "run" ]; then
     case "$file" in
-        *\.tex|*\.md)       xdg-open "$base.pdf" ;;
+        *\.tex|*\.md)       setsid xdg-open "$base.pdf" & disown ;;
         *\.go)              go run "$file" ;;
         *)                  "$base" ;;
     esac

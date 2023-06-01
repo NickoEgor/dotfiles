@@ -1,5 +1,6 @@
 SHELL=/bin/bash
 USER=$(shell whoami)
+GROUP=$(shell id -gn $(USER))
 ARCH=$(shell uname -m)
 
 IDE_DIR:=${IDE_DIR}

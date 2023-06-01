@@ -197,6 +197,7 @@ nn gr :call ToggleResizeSplitMode()<CR>
 nn <silent> th :tabprev<CR>
 nn <silent> tl :tabnext<CR>
 nn <silent> tn :tabnew %<CR>
+nn <silent> tN :tabnew<CR>
 nn <silent> tc :tabclose<CR>
 nn <silent> tH :tabmove -1<CR>
 nn <silent> tL :tabmove +1<CR>

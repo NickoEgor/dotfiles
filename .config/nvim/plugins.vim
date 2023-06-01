@@ -155,6 +155,10 @@ Plug 'tpope/vim-commentary'
 nm <C-_> <plug>CommentaryLine<ESC>j
 vm <C-_> <plug>Commentary<ESC>
 
+" tagbar
+Plug 'preservim/tagbar'
+nn <silent> <leader>T :TagbarToggle<CR>
+
 " improved quoting/parenthesizing
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat' " dot command for vim-surround
@@ -226,7 +230,6 @@ Plug 'liuchengxu/space-vim-dark'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'savq/melange-nvim'
 Plug 'EdenEast/nightfox.nvim'
-Plug 'ellisonleao/gruvbox.nvim'
 
 " extra plugins
 call TryReadScriptFile('extra_plugins.vim')
