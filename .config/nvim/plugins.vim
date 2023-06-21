@@ -26,6 +26,7 @@ if has('nvim')
     nm <buffer><nowait> u <Plug>(fern-action-leave)
     nm <buffer><nowait> d <Plug>(fern-action-enter)
     nm <buffer><nowait> c <Plug>(fern-action-cancel)
+    nm <buffer><nowait> D <Plug>(fern-action-remove)
     nm <buffer> za <Plug>(fern-action-hidden:toggle)
     nm <buffer> yy <Plug>(fern-action-yank:label)
     nm <buffer> yb <Plug>(fern-action-yank)
@@ -64,6 +65,7 @@ if has('nvim')
     \  'sh': ['shfmt'],
     \  'python': ['autoimport', 'isort', 'autoflake', 'autopep8'],
     \  'json': ['jq', 'prettier', 'clang-format'],
+    \  'html': ['prettier'],
     \  'xml': ['xmllint'],
     \}
   let g:ale_linters_explicit = 1
@@ -228,8 +230,10 @@ Plug 'mtdl9/vim-log-highlighting'
 " theme
 Plug 'liuchengxu/space-vim-dark'
 Plug 'NLKNguyen/papercolor-theme'
-Plug 'savq/melange-nvim'
-Plug 'EdenEast/nightfox.nvim'
+if has('nvim')
+  Plug 'savq/melange-nvim'
+  Plug 'EdenEast/nightfox.nvim'
+endif
 
 " extra plugins
 call TryReadScriptFile('extra_plugins.vim')

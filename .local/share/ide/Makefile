@@ -36,7 +36,7 @@ GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 ### INTERNAL ###
 .PHONY: help edit todo vim plug debug root noroot backup notes
-default: help
+default: edit
 
 help:
 	@LC_ALL=C $(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null |\

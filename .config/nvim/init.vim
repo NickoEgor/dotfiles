@@ -244,8 +244,8 @@ if executable('shfmt')
 endif
 " jq | json
 if executable('jq')
-  au FileType json nn <buffer> <C-f> :%!jq<CR>
-  au FileType json vn <buffer> <C-f> :%!jq<CR>
+  au FileType json nn <buffer> <C-f> :%!jq .<CR>
+  au FileType json vn <buffer> <C-f> :%!jq .<CR>
 endif
 " prettier | yaml, html, css
 if executable('prettier')
