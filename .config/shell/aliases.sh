@@ -60,7 +60,9 @@ alias \
     gff='git log --full-history --' \
     gff1='git log --full-history -1 --' \
     gcl='git clean -dfx' \
-    grp='git remote prune'
+    grp='git remote prune' \
+    ghash='git log -n 1 --pretty=format:"%H"'
+
 
 # files
 alias \
@@ -73,6 +75,7 @@ alias \
     vq='${EDITOR} ${XDG_CONFIG_HOME}/qutebrowser/config.py' \
     vp='${EDITOR} ${XDG_CONFIG_HOME}/shell/profile.sh' \
     vo='${EDITOR} ${XDG_CONFIG_HOME}/shell/on_shell.sh' \
+    vn='${EDITOR} ${XDG_CONFIG_HOME}/shell/on_login.sh' \
     vr='${EDITOR} ${XDG_CONFIG_HOME}/xresources' \
     vb='${EDITOR} ~/.bashrc' \
     vx='${EDITOR} ~/.xinitrc' \
