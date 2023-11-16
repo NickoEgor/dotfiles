@@ -39,6 +39,7 @@ run_c_cpp_build() {
         c_libs+=(-lX11)
         # disabled by default
         # c_libs+=(-lexplain)
+        # c_libs+=($(pkg-config --cflags --libs cairomm-1.0))
     fi
 
     if [ "$lang" = "c" ]; then
