@@ -61,12 +61,13 @@ alias \
     gff1='git log --full-history -1 --' \
     gcl='git clean -dfx' \
     grp='git remote prune' \
-    ghash='git log -n 1 --pretty=format:"%H"'
+    ghash='git log -n 1 --pretty=format:"%H"' \
+    gsw='git show'
 
 # files
 alias \
     va='${EDITOR} ${XDG_CONFIG_HOME}/shell/aliases.sh' \
-    vv='${EDITOR} ${XDG_CONFIG_HOME}/nvim/init.vim' \
+    vv='${EDITOR} ${XDG_CONFIG_HOME}/nvim/init.*' \
     vs='${EDITOR} ${XDG_CONFIG_HOME}/sxhkd/sxhkdrc' \
     vf='${EDITOR} ${XDG_CONFIG_HOME}/vifm/vifmrc' \
     vl='${EDITOR} ${XDG_CONFIG_HOME}/lf/lfrc' \
@@ -135,6 +136,6 @@ lfcd () {
     lf -last-dir-path="$tmp" "$@"
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"
-        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir" || exit 1
+        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir" || return 1
     fi
 }

@@ -64,3 +64,17 @@ nnoremap <leader>ff <cmd>Telescope find_files<CR>
 nnoremap <leader>fg <cmd>Telescope live_grep<CR>
 nnoremap <leader>fb <cmd>Telescope buffers<CR>
 nnoremap <leader>fh <cmd>Telescope help_tags<CR>
+
+" indentation
+Plug 'Yggdroot/indentLine' " can break conceallevel
+let g:indentLine_faster = 1
+if !has('nvim')
+  let g:indentLine_char = '|'
+endif
+au FileType tex,markdown,json let g:indentLine_setColors = 0
+au FileType tex,markdown,json let g:indentLine_enabled = 0
+
+" language switching
+Plug 'lyokha/vim-xkbswitch'
+let g:XkbSwitchEnabled = 1
+let g:XkbSwitchLib = '/usr/lib/libxkbswitch.so'

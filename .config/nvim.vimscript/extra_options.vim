@@ -1,6 +1,6 @@
 " extra_options.vim
 
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python3_host_prog = '/usr/bin/python3'
 
 if has('nvim-0.5.0')
 

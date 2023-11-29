@@ -48,15 +48,20 @@ set fileencodings=utf-8,cp1251,ucs-2,koi8-r,cp866
 set fileformat=unix
 set fileformats=unix,dos,mac
 " search
-set incsearch
 set hlsearch
-" tab/space/indent
+set incsearch
+" case-insensitive searching UNLESS \C or capital in search
+set ignorecase
+set smartcase
+" tab/space
 set tabstop=4         " width for Tab
 set shiftwidth=4      " width for shifting with '>>'/'<<'
 set softtabstop=4     " width for Tab in inserting or deleting (Backspace)
 set smarttab
 set expandtab
+" indetation
 set autoindent
+set breakindent
 " nonprintable characters
 set list
 set listchars=tab:>\ ,trail:·
@@ -119,19 +124,26 @@ set textwidth=120
 set colorcolumn=120
 " window title
 set title
-" misc
-set completeopt-=preview
+" make buffer hidden when it's abandoned
 set hidden
+" keep signcolumn on
+set signcolumn=yes
+" do show extra information about the currently selected completion
+set completeopt-=preview
 " }}}
 
 " {{{ MAPPINGS
 
+" disable Ex mode
+nn Q <nop>
+
+" disable space action
+nn <Space> <nop>
+vn <Space> <nop>
+
 " change <paste> command behaviour
 xn p "_dp
 xn P "_dP
-
-" disable Ex mode
-nn Q <nop>
 
 " annoying keys
 com! W :w
@@ -147,15 +159,13 @@ com! -bang Qa :qa<bang>
 com! -bang QA :qa<bang>
 
 " normal mode bindings
-nn <silent> <leader>h :noh<Enter>
+nn <silent> <leader>h :noh<CR>
 nn Y y$
 nn zq ZQ
-
 " open next buffer
 nn <silent> gB :bNext<CR>
 " buffer close
 nn <silent> <C-q> :close<CR>
-
 " update file and search
 nn <silent> <A-n> :e<CR>n
 nn <silent> <A-N> :e<CR>N
@@ -192,7 +202,7 @@ nn <silent> <expr> <C-j> !exists('b:SplitResize') ? '<C-w><C-j>' : ':res -1<CR>'
 nn <silent> <expr> <C-k> !exists('b:SplitResize') ? '<C-w><C-k>' : ':res +1<CR>'
 nn <silent> <expr> <C-l> !exists('b:SplitResize') ? '<C-w><C-l>' : ':vert res +1<CR>'
  " NOTE: it's better to not remap ESC button
-nn gr :call ToggleResizeSplitMode()<CR>
+nn gR :call ToggleResizeSplitMode()<CR>
 " }}}
 
 " {{{ TABS
@@ -214,11 +224,6 @@ nn <leader>7 7gt
 nn <leader>8 8gt
 nn <leader>9 9gt
 nn <silent> <leader>0 :tablast<CR>
-
-" switch to last tab
-au TabLeave * let g:lasttab = tabpagenr()
-nn <silent> <leader>` :exe "tabn ".g:lasttab<CR>
-vn <silent> <leader>` :exe "tabn ".g:lasttab<CR>
 " }}}
 
 " {{{ SESSION
@@ -281,7 +286,7 @@ nn <leader>X :!chmod -x %<CR>
 
 " commentstrings
 au FileType xdefaults setlocal commentstring=!\ %s
-au FileType desktop,sxhkdrc,bib setlocal commentstring=#\ %s
+au FileType desktop,sxhkdrc setlocal commentstring=#\ %s
 au FileType c,cpp setlocal commentstring=//\ %s
 
 " tex
